@@ -6,7 +6,7 @@ import random
 
 
 class DAG(object):
-    def __init__(self,active_lst_addr='./DAG/active_list.json',timespan =-1):
+    def __init__(self,active_lst_addr='./dagSS/active_list.json',timespan =-1):
         """Inits the class."""
         self.active_lst_addr = active_lst_addr
         self.timespan = timespan
@@ -42,14 +42,14 @@ class DAG(object):
         with open(self.active_lst_addr,'w') as f:
             json.dump(self.active_pool,f)
             f.close()
-        with open('./DAG/tip_list.json','w') as f:
+        with open('./dagSS/tip_list.json','w') as f:
             json.dump(self.tips_pool,f)
             f.close()
     
     def DAG_genesisDel(self):
         if 'GenesisBlock' in self.tips_pool.keys():
             del self.tips_pool['GenesisBlock']
-        with open('./DAG/tip_list.json','w') as f:
+        with open('./dagSS/tip_list.json','w') as f:
             json.dump(self.tips_pool,f)
             f.close()
 

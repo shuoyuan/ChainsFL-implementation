@@ -3,6 +3,7 @@ import sys
 import struct
 import os
 import time
+import json
 
 def socket_client(aim_addr):
     try:
@@ -65,6 +66,22 @@ def client_tips_require(aim_addr,tips_list,tips_file):
     data = tips_list.encode()
     s.send(data)
     rev_file(s,tips_file)
+    s.close()
+
+def trans_upload(aim_addr,trans_info):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((aim_addr, 6666))
+    except socket.error as msg:
+        print(msg)
+        sys.exit(1)
+    print(s.recv(1024).decode())
+    data = 'transUpload'.encode()
+    s.send(data)
+    response = s.recv(1024)
+    data = json.dumps(trans_info.json_output()).encode("utf-8")
+    s.send(data)
+    response = s.recv(1024)
     s.close()
 
 def rev_file(conn,file_addr):

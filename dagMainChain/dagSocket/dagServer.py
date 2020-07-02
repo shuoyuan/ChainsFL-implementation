@@ -5,8 +5,10 @@ import sys
 import struct
 import os
 import shutil
+from dagComps import transaction
+import json
 
-def socket_service(local_addr):
+def socket_service(local_addr, dag_pool, beta):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -18,7 +20,7 @@ def socket_service(local_addr):
         sys.exit(1)
     while 1:
         conn, addr = s.accept()
-        t = threading.Thread(target=deal_data, args=(conn, addr))
+        t = threading.Thread(target=deal_data, args=(conn, addr, dag_pool, beta))
         t.start()
 
 def send_file(conn,file_addr):
@@ -35,13 +37,14 @@ def send_file(conn,file_addr):
                 break
             conn.send(data)
 
-def deal_data(conn, addr):
+def deal_data(conn, addr, dag_pool, beta):
     print('Accept new connection from {0}'.format(addr))
     conn.send(("You've connected, wait for command...").encode())
     while 1:
         data = conn.recv(1024)
         msg = data.decode()
-        print('{0} client send data is {1}'.format(addr, msg))
+        if msg == 'exit' or msg == 'require' or msg == 'requireTips' or msg == 'transUpload' or msg == 'delay':
+            print('{0} client send data is {1}'.format(addr, msg))
         time.sleep(1)
         if msg == 'exit' or not data:
             print('{0} connection close'.format(addr))
@@ -52,14 +55,23 @@ def deal_data(conn, addr):
             conn.send('ok'.encode())
             data_t = conn.recv(1024)
             msg_t = data_t.decode()
-            require_trans_file = './DAG/DAG_pool/'+msg_t+'.json'
+            require_trans_file = './dagSS/dagPool/'+msg_t+'.json'
             send_file(conn, require_trans_file)
         elif msg == 'requireTips':
             conn.send('ok'.encode())
             data_t = conn.recv(1024)
             msg_t = data_t.decode()
-            require_tips_file = './DAG/DAG_pool/'+msg_t+'.json'
+            require_tips_file = './dagSS/'+msg_t+'.json'
             send_file(conn, require_tips_file)
+        elif msg == 'transUpload':
+            conn.send('ok'.encode())
+            data_t = conn.recv(1024)
+            conn.send('ok'.encode())
+            msg_t = json.loads(data_t.decode("utf-8"))
+            new_trans = transaction.Transaction(**msg_t)
+            dag_pool.DAG_publish(new_trans, beta)
+            transaction.save_transaction(new_trans, './dagSS/dagPool/')
+            print('The new trans had been published!')
         elif msg == 'delay':
             conn.send(str(time.time()).encode())
     conn.close()

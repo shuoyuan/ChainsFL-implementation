@@ -64,9 +64,28 @@ def save_transaction(trans,file_addr):
         f.write(str(trans))
         f.close()
 
+def save_genesis(trans,file_addr):
+    file_name = file_addr + 'GenesisBlock' + '.json'
+    with open(file_name, 'w') as f:
+        f.write(str(trans))
+        f.close()
+
 def name_2_time(trans_name):
     name = str(trans_name)
     split_lst = name.split('_',1)
     src_node = split_lst[0]
     time = float(split_lst[1])
     return time,src_node
+
+if __name__ == '__main__':
+    nodeNum = 1
+    new_model_para = 'hash1'
+    apv_trans_name = []
+    new_trans = Transaction(time.time(), nodeNum,'', new_model_para, apv_trans_name)
+    tst = new_trans.json_output()
+    tst2 = json.dumps(tst).encode("utf-8")
+    print(tst2)
+    tst3 = json.loads(tst2.decode("utf-8"))
+    print(tst3)
+    print(tst3['timestamp'])
+    
