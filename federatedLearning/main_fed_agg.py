@@ -117,13 +117,13 @@ if __name__ == '__main__':
         w_glob = FedAvg(w_locals)
         globEpochFile = './' + str(currentEpoch) + 'Epoch' + 'parameter.pkl'
         torch.save(w_glob, globEpochFile)
-        currentEpoch += 1
         ## taskEpoch template {"Args":["set","taskID","{"epoch":1,"status":"runing","paras":"fileHash"}"]}
         if currentEpoch < args.epochs:
             currentStatus = "training"
         elif currentEpoch == args.epochs:
             currentStatus = "done"
-        globParaInvoke = os.popen(r"./epochGlobUpdate.sh" + " " + globEpochFile + " " + taskID + " " + str(currentEpoch-1) + " " + currentStatus)
+        globParaInvoke = os.popen(r"./epochGlobUpdate.sh" + " " + globEpochFile + " " + taskID + " " + str(currentEpoch) + " " + currentStatus)
+        currentEpoch += 1
         
     net_glob.load_state_dict(w_glob)
 
