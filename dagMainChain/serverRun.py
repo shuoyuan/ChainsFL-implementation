@@ -24,7 +24,7 @@ def main(arg=True):
 # Generate the genesis block for DAG
     # genesisGen = os.popen(r"bash ./invokeRun.sh genesis")
     # genesisInfo = genesisGen.read()
-    genesisInfo = 'QmbFMke1KXqnYyBBWxB74N4c5SBnJMVAiMNRcGu6x1AwQH'
+    genesisInfo = 'QmaBYCmzPQ2emuXpVykLDHra7t8tPiU8reFMkbHpN1rRoo'
     print("The genesisBlock hash value is ", genesisInfo)
     # genesisGen.close()
     ini_trans = transaction.Transaction(time.time(), 0, 0.0, genesisInfo, [])

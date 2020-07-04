@@ -152,7 +152,7 @@ def main(aim_addr='127.0.0.1'):
                     break
                 else:
                     print('\nFailed to download the apv parasfile ' + apvParasFile + ' !\n')
-            print('The parafile hash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
+            print('The filehash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
 
             # load the apv paras
             net_glob.load_state_dict(torch.load(apvParasFile))

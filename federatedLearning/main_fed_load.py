@@ -64,8 +64,8 @@ if __name__ == '__main__':
 
     # copy weights
     w_glob = net_glob.state_dict()
-    # torch.save(w_glob, '\\'+'genesisBlock.pkl')
-    # print('The genesis paras are', w_glob)
+    torch.save(w_glob, './data/genesisBlock.pkl')
+    print('The genesis paras are', w_glob)
 
     # training
     loss_train = []
@@ -82,19 +82,21 @@ if __name__ == '__main__':
     # w_glob = FedAvg(w_locals)
     # torch.save(w_glob, '\\'+'parameter.pkl')
     # copy weight to net_glob
-    w_apv = []
-    net_glob.load_state_dict(torch.load('./data/paras/'+'6parameter.pkl'))
-    tst = net_glob.state_dict()
-    w_apv.append(copy.deepcopy(tst))
-    print('The paras of tst are', tst)
-    net_glob.load_state_dict(torch.load('./data/paras/'+'9parameter.pkl'))
-    tst2 = net_glob.state_dict()
-    w_apv.append(copy.deepcopy(tst2))
-    print('The paras of tst2 are', tst2)
-    print('The combination of paras are', w_apv)
-    w_glob = FedAvg(w_apv)
-    print(w_glob)
-    net_glob.load_state_dict(w_glob)
+
+
+    # w_apv = []
+    # net_glob.load_state_dict(torch.load('./data/paras/'+'6parameter.pkl'))
+    # tst = net_glob.state_dict()
+    # w_apv.append(copy.deepcopy(tst))
+    # print('The paras of tst are', tst)
+    # net_glob.load_state_dict(torch.load('./data/paras/'+'9parameter.pkl'))
+    # tst2 = net_glob.state_dict()
+    # w_apv.append(copy.deepcopy(tst2))
+    # print('The paras of tst2 are', tst2)
+    # print('The combination of paras are', w_apv)
+    # w_glob = FedAvg(w_apv)
+    # print(w_glob)
+    # net_glob.load_state_dict(w_glob)
 
     # print loss
     # iter = 1
