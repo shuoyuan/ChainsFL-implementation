@@ -5,6 +5,7 @@
 data/
 federatedLearning/data/paras/
 dagMainChain/clientS/paras/
+federatedLearning/save/
 
 # documents
 *.csv
