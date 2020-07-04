@@ -72,7 +72,8 @@ def main(aim_addr='127.0.0.1'):
     while 1:
         # build model
         args = args_parser()
-        args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
+        # args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
+        args.device = torch.device('cpu')
 
         ## load dataset and split users
         if args.dataset == 'mnist':
