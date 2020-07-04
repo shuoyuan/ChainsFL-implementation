@@ -188,6 +188,7 @@ def main(aim_addr='127.0.0.1'):
                     print('*** Failed to publish the init aggModel of ' + taskID + ' ! ***\n')
         else:
             currentEpoch = 1
+            aggEchoFileHash = ''
             while (currentEpoch <= args.epochs):
                 flagList = set(copy.deepcopy(deviceSelected))
                 w_locals = []
