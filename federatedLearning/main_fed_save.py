@@ -50,7 +50,7 @@ if __name__ == '__main__':
     args.epochs = taskInfo['epochs']
     taskID = taskInfo['taskID']
 
-    # query spe task status
+    # query specific task status
     taskSttQueryshell = "peer chaincode query -C mychannel -n sacc -c '{\"Args\":[\"get\",\"" + taskID + "\"]}'"
     ## !! need to check the runing status
     taskSttQuery = os.popen(oneKeyEnv + " && " + taskSttQueryshell)

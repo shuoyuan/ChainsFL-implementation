@@ -46,6 +46,10 @@ def main(aim_addr='127.0.0.1'):
         shutil.rmtree('./clientS')
     os.mkdir('./clientS')
 
+    if os.path.exists('./clientS/paras'):
+        shutil.rmtree('./clientS/paras')
+    os.mkdir('./clientS/paras')
+
     with open('./run_state.txt','w') as f:
         f.write('-1')
         f.close()
@@ -142,9 +146,9 @@ def main(aim_addr='127.0.0.1'):
             apvTransInfo = transaction.read_transaction(apvTransFile)
             # test code
             # instead to get the para from ipfs
-            net_glob.load_state_dict(torch.load('\\'+str(i)+'parameter.pkl'))
+            net_glob.load_state_dict(torch.load('../federatedLearning/data/paras/'+str(i)+'parameter.pkl'))
             w_tmp = net_glob.state_dict()
-            print('\\'+str(i)+'parameter.pkl')
+            print(str(i)+'parameter.pkl')
 
             w_apv.append(copy.deepcopy(w_tmp))
             i += 1
@@ -152,7 +156,7 @@ def main(aim_addr='127.0.0.1'):
             w_glob = w_apv[0]
         else:
             w_glob = FedAvg(w_apv)
-        torch.save(w_glob, '\\agg-'+str(iteration_count)+'parameter.pkl')
+        torch.save(w_glob, './clientS/paras/agg-'+str(iteration_count)+'parameter.pkl')
 
         #test code
         new_model_para = 'hashValue' + str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))

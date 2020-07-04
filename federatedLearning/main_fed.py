@@ -10,6 +10,7 @@ import numpy as np
 from torchvision import datasets, transforms
 import torch
 from json import dumps
+import datetime
 
 from utils.sampling import mnist_iid, mnist_noniid, cifar_iid
 from utils.options import args_parser
@@ -79,13 +80,10 @@ if __name__ == '__main__':
             loss_locals.append(copy.deepcopy(loss))
         # update global weights
         w_glob = FedAvg(w_locals)
-        torch.save(w_glob, '\\'+str(iter)+'parameter.pkl')
+        torch.save(w_glob, './data/paras/'+str(iter)+'parameter.pkl')
         # copy weight to net_glob
         net_glob.load_state_dict(w_glob)
         print('The content of w_glob', w_glob)
-        tst = net_glob.state_dict()
-        print('The content of tst', tst)
-        torch.save(tst, '\\tst-'+str(iter)+'parameter.pkl')
 
         # print loss
         loss_avg = sum(loss_locals) / len(loss_locals)
@@ -96,7 +94,7 @@ if __name__ == '__main__':
     plt.figure()
     plt.plot(range(len(loss_train)), loss_train)
     plt.ylabel('train_loss')
-    plt.savefig('\\fed_{}_{}_{}_C{}_iid{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid))
+    plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d%H%M%S')))
 
     # testing
     net_glob.eval()

@@ -83,11 +83,11 @@ if __name__ == '__main__':
     # torch.save(w_glob, '\\'+'parameter.pkl')
     # copy weight to net_glob
     w_apv = []
-    net_glob.load_state_dict(torch.load('\\'+'6parameter.pkl'))
+    net_glob.load_state_dict(torch.load('./data/paras/'+'6parameter.pkl'))
     tst = net_glob.state_dict()
     w_apv.append(copy.deepcopy(tst))
     print('The paras of tst are', tst)
-    net_glob.load_state_dict(torch.load('\\'+'9parameter.pkl'))
+    net_glob.load_state_dict(torch.load('./data/paras/'+'9parameter.pkl'))
     tst2 = net_glob.state_dict()
     w_apv.append(copy.deepcopy(tst2))
     print('The paras of tst2 are', tst2)
