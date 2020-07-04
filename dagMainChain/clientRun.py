@@ -176,6 +176,7 @@ def main(aim_addr='127.0.0.1'):
                 break
             else:
                 print('\nFailed to uploaded the aggregated parasfile ' + aggParasFile + ' !\n')
+        fileHash = fileHash.strip()
         new_trans = transaction.Transaction(time.time(), nodeNum,'', fileHash, apv_trans_name)
         dagClient.trans_upload(aim_addr, new_trans)
         print('\n******************')
