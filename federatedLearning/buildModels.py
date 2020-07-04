@@ -34,6 +34,9 @@ from models.test import test_img
 # from test import test_img
 
 def modelBuild():
+    """
+    Build the basic training network and return the related args.
+    """
     # build model
     args = args_parser()
     args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
@@ -79,10 +82,7 @@ def modelBuild():
 
     return net_glob, args, dataset_train, dataset_test, dict_users
 
-def argsTest():
-    args = args_parser()
-    return args
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # net_glob, args, dataset_train, dataset_test, dict_users = modelBuild()
     # print(args.device)
