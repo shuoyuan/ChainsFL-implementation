@@ -18,8 +18,8 @@ import numpy as np
 from torchvision import datasets, transforms
 import torch
 
-sys.path.append('D:\Documents\\blockchain\\federatedLearningBC\\federatedLearning')
-sys.path.append('D:\Documents\\blockchain\\federatedLearningBC\\federatedLearning')
+sys.path.append('../federatedLearning')
+# sys.path.append('D:\Documents\\blockchain\\federatedLearningBC\\federatedLearning')
 # from federatedLearning.utils.sampling import mnist_iid, mnist_noniid, cifar_iid
 # from federatedLearning.utils.options import args_parser
 # from federatedLearning.models.Update import LocalUpdate
