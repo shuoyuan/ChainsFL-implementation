@@ -248,8 +248,8 @@ def main(aim_addr='127.0.0.1'):
             print('******************\n')
             print('*** The trans generated in the iteration #%d had been uploaded!'%iteration_count+' ***\n')
             print('*************************************************************************************\n')
-            iteration_count += 1
-            time.sleep(10)
+        iteration_count += 1
+        time.sleep(10)
 
 if __name__ == '__main__':
     main('127.0.0.1')
