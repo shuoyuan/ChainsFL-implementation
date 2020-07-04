@@ -108,9 +108,9 @@ elif [ "${MODE}" == "local" ]; then
   sleep 2
   devQuery 1 $1
 elif [ "${MODE}" == "aggregated" ]; then
-  aggModelPublish 1 $1 $2 $3 $4
+  aggModelPub 1 $1 $2 $3 $4
   sleep 2
-  devQuery 1 $2
+  devQuery 1 $1
 elif [ "${MODE}" == "query" ]; then
   devQuery 1 $1
 else

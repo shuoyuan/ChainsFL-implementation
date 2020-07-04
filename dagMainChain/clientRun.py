@@ -172,6 +172,7 @@ def main(aim_addr='127.0.0.1'):
                 else:
                     print(trErrs)
                     print('*** Failed to release ' + taskID + ' ! ***\n')
+                    time.sleep(2)
 
             ## Publish the initialization model
             ### taskEpoch template {"Args":["set","taskID","{"epoch":1,"status":"training","paras":"fileHash"}"]}
