@@ -95,6 +95,7 @@ def main(aim_addr='127.0.0.1'):
     while 1:
         # Choose and require the apv trans
         apv_trans_name = []
+        aggEchoFileHash = ''
         if iteration_count == 0:
             apv_trans_name.append('GenesisBlock')
         else:
@@ -188,7 +189,6 @@ def main(aim_addr='127.0.0.1'):
                     print('*** Failed to publish the init aggModel of ' + taskID + ' ! ***\n')
         else:
             currentEpoch = 1
-            aggEchoFileHash = ''
             while (currentEpoch <= args.epochs):
                 flagList = set(copy.deepcopy(deviceSelected))
                 w_locals = []
