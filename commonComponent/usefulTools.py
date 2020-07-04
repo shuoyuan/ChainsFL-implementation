@@ -40,26 +40,26 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
     """
     Query and download the paras file of local model trained by the device.
     """
-        localQuery = subprocess.Popen(args=['../commonComponent/interRun.sh query '+deviceID], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
-        outs, errs = localQuery.communicate(timeout=15)
-        if localQuery.poll() == 0:
-            localDetail = json.loads(outs.strip())
-            if localDetail['epoch'] == currentEpoch and localDetail['taskID'] == taskID:
-                print("The query result is ", outs.strip())
-                while 1:
-                    localFileName = './clientS/paras/' + taskID + deviceID + 'Epoch' + str(currentEpoch) + '.pkl'
-                    outs, stt = ipfsGetFile(localDetail[], localFileName)
-                    if stt == 0:
-                        break
-                    else:
-                        print(outs.strip())
-                lock.acquire()
-                t1 = flagSet
-                t1.add(deviceID)
-                flagSet = t1
-                lock.release()
-        else:
-            print("Failed to query this device!", errs)
+    localQuery = subprocess.Popen(args=['../commonComponent/interRun.sh query '+deviceID], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+    outs, errs = localQuery.communicate(timeout=15)
+    if localQuery.poll() == 0:
+        localDetail = json.loads(outs.strip())
+        if localDetail['epoch'] == currentEpoch and localDetail['taskID'] == taskID:
+            print("The query result is ", outs.strip())
+            while 1:
+                localFileName = './clientS/paras/' + taskID + deviceID + 'Epoch' + str(currentEpoch) + '.pkl'
+                outs, stt = ipfsGetFile(localDetail[], localFileName)
+                if stt == 0:
+                    break
+                else:
+                    print(outs.strip())
+            lock.acquire()
+            t1 = flagSet
+            t1.add(deviceID)
+            flagSet = t1
+            lock.release()
+    else:
+        print("Failed to query this device!", errs)
 
 if __name__ == '__main__':
     reCon, reCode = ipfsAddFile(sys.argv[1])
