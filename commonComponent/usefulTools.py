@@ -48,7 +48,7 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
             print("The query result is ", outs.strip())
             while 1:
                 localFileName = './clientS/paras/' + taskID + deviceID + 'Epoch' + str(currentEpoch) + '.pkl'
-                outs, stt = ipfsGetFile(localDetail[], localFileName)
+                outs, stt = ipfsGetFile(localDetail['paras'], localFileName)
                 if stt == 0:
                     break
                 else:
