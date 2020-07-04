@@ -3,7 +3,8 @@
 
 # folders
 data/
-
+federatedLearning/data/paras/
+dagMainChain/clientS/paras/
 
 # documents
 *.csv
