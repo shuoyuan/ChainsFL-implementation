@@ -92,10 +92,10 @@ def rev_file(conn,file_addr):
             filename, filesize = struct.unpack('128si', buf)
             fn = filename.strip(b'\00')
             fn = fn.decode()
-            print('file new name is {0}, filesize is {1}'.format(str(fn), filesize))
+            print('File name is {0}, filesize is {1}'.format(str(fn), filesize))
             recvd_size = 0
             fp = open(file_addr, 'wb')
-            print('start receiving...')
+            print('Start receiving...')
             conn.send('OK'.encode())
             while not recvd_size == filesize:
                 if filesize - recvd_size > 1024:
@@ -106,7 +106,7 @@ def rev_file(conn,file_addr):
                     recvd_size = filesize
                 fp.write(data)
             fp.close()
-            print('end receive...')
+            print('End receive...')
         break
 
 if __name__ == '__main__':

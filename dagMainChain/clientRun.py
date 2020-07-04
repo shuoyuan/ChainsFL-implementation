@@ -9,6 +9,10 @@ import shutil
 import json
 import random
 
+# Common Components
+sys.path.append('../commonComponent')
+import usefulTools
+
 ## FL related
 import matplotlib
 matplotlib.use('Agg')
@@ -19,13 +23,6 @@ from torchvision import datasets, transforms
 import torch
 
 sys.path.append('../federatedLearning')
-# sys.path.append('D:\Documents\\blockchain\\federatedLearningBC\\federatedLearning')
-# from federatedLearning.utils.sampling import mnist_iid, mnist_noniid, cifar_iid
-# from federatedLearning.utils.options import args_parser
-# from federatedLearning.models.Update import LocalUpdate
-# from federatedLearning.models.Nets import MLP, CNNMnist, CNNCifar
-# from federatedLearning.models.Fed import FedAvg
-# from federatedLearning.models.test import test_img
 from utils.sampling import mnist_iid, mnist_noniid, cifar_iid
 from utils.options import args_parser
 from models.Update import LocalUpdate
@@ -118,6 +115,7 @@ def main(aim_addr='127.0.0.1'):
         w_glob = net_glob.state_dict()
         w_apv = []
 
+        # Choose and require the apv trans
         iteration_count += 1
         apv_trans_name = []
         if iteration_count == 1:
@@ -134,38 +132,55 @@ def main(aim_addr='127.0.0.1'):
             else:
                 apv_trans_name = random.sample(tips_dict.keys(), alpha)
 
-        print('******************')
+        print('\n******************')
         print('The approved tips are ', apv_trans_name)
-        print('******************')
+        print('******************\n')
 
-        i = 1
+        # Get the trans file
         for apvTrans in apv_trans_name:
             apvTransFile =  './clientS/' + apvTrans + '.json'
-            print('This approved trans is ', apvTrans, ', and the file is ', apvTransFile)
             dagClient.client_trans_require(aim_addr, apvTrans, apvTransFile)
+            print('This approved trans is ', apvTrans, ', and the file is ', apvTransFile)
             apvTransInfo = transaction.read_transaction(apvTransFile)
-            # test code
-            # instead to get the para from ipfs
-            net_glob.load_state_dict(torch.load('../federatedLearning/data/paras/'+str(i)+'parameter.pkl'))
-            w_tmp = net_glob.state_dict()
-            print(str(i)+'parameter.pkl')
+            apvParasFile = './clientS/paras/' + apvTrans + 'pkl'
 
+            while 1:
+                fileGetStatus, sttCodeGet = usefulTools.ipfsGetFile(apvTransInfo.model_para, apvParasFile)
+                if sttCodeGet == 0:
+                    print(fileGetStatus)
+                    print('\nThe apv parasfile ' + apvParasFile + ' has been downloaded!\n')
+                    break
+                else:
+                    print('\nFailed to download the apv parasfile ' + apvParasFile + ' !\n')
+            print('The parafile hash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
+
+            # load the apv paras
+            net_glob.load_state_dict(torch.load(apvParasFile))
+            w_tmp = net_glob.state_dict()
             w_apv.append(copy.deepcopy(w_tmp))
-            i += 1
+        
         if len(w_apv) == 1:
             w_glob = w_apv[0]
         else:
             w_glob = FedAvg(w_apv)
-        torch.save(w_glob, './clientS/paras/agg-'+str(iteration_count)+'parameter.pkl')
+        aggParasFile = './clientS/paras/agg-'+str(iteration_count)+'parameter.pkl'
+        torch.save(w_glob, aggParasFile)
 
-        #test code
-        new_model_para = 'hashValue' + str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))
-        new_trans = transaction.Transaction(time.time(), nodeNum,'', new_model_para, apv_trans_name)
+        # Add the aggregated paras file to ipfs network
+        while 1:
+            fileHash, sttCodeAdd = usefulTools.ipfsAddFile(aggParasFile)
+            if sttCodeAdd == 0:
+                print('\nThe aggregated parasfile ' + aggParasFile + ' has been uploaded!\n')
+                break
+            else:
+                print('\nFailed to uploaded the aggregated parasfile ' + aggParasFile + ' !\n')
+        new_trans = transaction.Transaction(time.time(), nodeNum,'', fileHash, apv_trans_name)
         dagClient.trans_upload(aim_addr, new_trans)
-        print('******************')
+        print('\n******************')
         print('The details of this trans are', new_trans)
-        print('******************')
-        print('The trans generated in the iteration #%d had been uploaded!'%iteration_count)
+        print('******************\n')
+        print('*** The trans generated in the iteration #%d had been uploaded!'%iteration_count+' ***\n')
+        print('*************************************************************************************\n')
         time.sleep(10)
 
 if __name__ == '__main__':

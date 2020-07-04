@@ -14,6 +14,14 @@ import json
 import time
 import subprocess
 
+def ipfsFileGet(hashValue, fileName):
+    ipfsGet = subprocess.Popen(args=['ipfs get ' + hashValue + ' -o ' + fileName], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+    outs, errs = ipfsGet.communicate(timeout=10)
+    if ipfsGet.poll() == 0:
+        return outs, ipfsGet.poll()
+    else:
+        return errs, ipfsGet.poll()
+    
 
 def shellResult():
     # shell envs
@@ -31,14 +39,6 @@ def shellResult():
 
     taskQueryshell = "peer chaincode query -C mychannel -n sacc -c '{\"Args\":[\"get\",\"taskRelease\"]}'"
 
-    # taskQuery = subprocess.Popen(args=[oneKeyEnv + " && " + taskQueryshell], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
-    # try:
-    #     outs, errs = taskQuery.communicate(timeout=15)
-    #     print('The stdout is ', outs)
-    #     print('The stderr is ', errs)
-    # except TimeoutExpired:
-    #     taskQuery.kill()
-    # print('The returncode of taskQuery is ', taskQuery.poll())
     while 1:
         taskQuery = subprocess.Popen(args=[oneKeyEnv + " && " + taskQueryshell], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
         try:
@@ -54,16 +54,6 @@ def shellResult():
         else:
             print('The query failed to execute!\n')
             time.sleep(2)
-            
-    # print(taskQuery.stdout)
-    # taskInfoR = taskQuery.read()
-    # print('The execute result is', taskInfoR)
-    # taskQuery.close()
-    # taskInfo = json.loads(taskInfoR)
-    # args.frac = taskInfo['usersFrac']
-    # args.epochs = taskInfo['epochs']
-    # taskID = taskInfo['taskID']
-    # print('The details of task are', taskInfo)
 
 def queryTest():
     taskID = 'task'+str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))
@@ -86,4 +76,6 @@ def invokeTest():
     taskQuery.close()
 
 if __name__ == '__main__':
-    shellResult()
+    a, resultCode = ipfsFileGet(sys.argv[1],sys.argv[2])
+    print('a is ', a)
+    print('resultCode is ', resultCode)
