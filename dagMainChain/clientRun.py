@@ -156,7 +156,7 @@ def main(aim_addr='127.0.0.1'):
             print('The filehash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
 
             # load the apv paras
-            net_glob.load_state_dict(torch.load(apvParasFile))
+            net_glob.load_state_dict(torch.load(apvParasFile,map_location=torch.device('cpu')))
             w_tmp = net_glob.state_dict()
             w_apv.append(copy.deepcopy(w_tmp))
         
