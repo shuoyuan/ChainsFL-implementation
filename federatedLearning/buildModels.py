@@ -11,8 +11,7 @@ from torchvision import datasets, transforms
 import torch
 from json import dumps
 import sys
-sys.path.append('D:\Documents\\blockchain\\federatedLearningBC\\federatedLearning')
-sys.path.append('D:\Documents\\blockchain\\federatedLearningBC\\federatedLearning')
+
 from utils.sampling import mnist_iid, mnist_noniid, cifar_iid
 from utils.options import args_parser
 from models.Update import LocalUpdate
@@ -27,7 +26,7 @@ from models.test import test_img
 # from Fed import FedAvg
 # from test import test_img
 
-def parasLoad(paraFile):
+def modelBuild():
     # build model
     args = args_parser()
     args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
@@ -66,16 +65,11 @@ def parasLoad(paraFile):
         net_glob = MLP(dim_in=len_in, dim_hidden=200, dim_out=args.num_classes).to(args.device)
     else:
         exit('Error: unrecognized model')
+        
     print(net_glob)
-    net_glob.train()
 
-    # copy weights
-    w_glob = net_glob.state_dict()
-
-    net_glob.load_state_dict(torch.load(paraFile))
-    parasDict = net_glob.state_dict()
-    print('The paras of parasDict are', parasDict)
-    return parasDict
+    return net_glob
 
 if __name__ == '__main__':
-    parasLoad('\\'+'9parameter.pkl')
+    net_test = modelBuild()
+    print(net_test)
