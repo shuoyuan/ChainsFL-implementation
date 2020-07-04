@@ -153,6 +153,7 @@ def main(aim_addr='127.0.0.1'):
                     print('\nThe apv parasfile ' + apvParasFile + ' has been downloaded!\n')
                     break
                 else:
+                    print(fileGetStatus)
                     print('\nFailed to download the apv parasfile ' + apvParasFile + ' !\n')
 
             # load the apv paras
