@@ -39,6 +39,17 @@ beta = 3
 
 nodeNum = 1
 
+# shell envs of Org1
+fabricLocation = "export FabricL=/home/shawn/Documents/fabric-samples/test-network"
+shellEnv1 = "export PATH=${FabricL}/../bin:$PATH"
+shellEnv2 = "export FABRIC_CFG_PATH=${FabricL}/../config/"
+shellEnv3 = "export CORE_PEER_TLS_ENABLED=true"
+shellEnv4 = "export CORE_PEER_LOCALMSPID=\"Org1MSP\""
+shellEnv5 = "export CORE_PEER_TLS_ROOTCERT_FILE=${FabricL}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+shellEnv6 = "export CORE_PEER_MSPCONFIGPATH=${FabricL}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
+shellEnv7 = "export CORE_PEER_ADDRESS=localhost:7051"
+oneKeyEnv = shellEnv1 + " && " + shellEnv2 + " && " + shellEnv3 + " && " + shellEnv4 + " && " + shellEnv5 + " && " + shellEnv6 + " && " + shellEnv7
+
 def main(aim_addr='127.0.0.1'):
     if os.path.exists('./clientS'):
         shutil.rmtree('./clientS')
@@ -48,41 +59,32 @@ def main(aim_addr='127.0.0.1'):
         shutil.rmtree('./clientS/paras')
     os.mkdir('./clientS/paras')
 
-    with open('./run_state.txt','w') as f:
-        f.write('-1')
-        f.close()
+    # build model
+    net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
+    net_glob.train()
 
-    print('Detect status of the task')
-    # while 1:
-    #     with open('./run_state.txt', 'r') as f:
-    #         state = f.read()
-    #         if state != '-1':
-    #             f.close()
-    #             break
-    #     time.sleep(1)
-    #     print('Task not started!')
+    ## copy weights
+    w_glob = net_glob.state_dict()
 
-    # print('Task is runing!')
-
-    # with open('./run_state.txt', 'r') as f:
-    #     rank = int(f.read())
-    # print('The epoch of this sharding is ' + str(rank))
-
+    # init the task ID
+    taskID = 'task'+str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))+str(random.randint(1,10))
     iteration_count = 0
 
+    # selected device
+    ## init the list of device name
+    allDeviceName = []
+    for i in range(args.num_users):
+        allDeviceName.append("device"+("{:0>5d}".format(i)))
+    deviceSelected = []
+    m = max(int(args.frac * args.num_users), 1) # args.frac is the fraction of users
+    idxs_users = np.random.choice(range(args.num_users), m, replace=False)
+    for idx in idxs_users:
+        deviceSelected.append(allDeviceName[idx])
+
     while 1:
-        # build model
-        net_glob = buildModels.modelBuild()
-        net_glob.train()
-
-        ## copy weights
-        w_glob = net_glob.state_dict()
-        w_apv = []
-
         # Choose and require the apv trans
-        iteration_count += 1
         apv_trans_name = []
-        if iteration_count == 1:
+        if iteration_count == 0:
             apv_trans_name.append('GenesisBlock')
         else:
             tips_list = 'tip_list'
@@ -101,6 +103,7 @@ def main(aim_addr='127.0.0.1'):
         print('******************\n')
 
         # Get the trans file
+        w_apv = []
         for apvTrans in apv_trans_name:
             apvTransFile =  './clientS/' + apvTrans + '.json'
             dagClient.client_trans_require(aim_addr, apvTrans, apvTransFile)
@@ -128,20 +131,102 @@ def main(aim_addr='127.0.0.1'):
             w_glob = w_apv[0]
         else:
             w_glob = FedAvg(w_apv)
-        aggParasFile = './clientS/paras/agg-'+str(iteration_count)+'parameter.pkl'
-        torch.save(w_glob, aggParasFile)
+        baseParasFile = './clientS/paras/baseModelParas-iter'+str(iteration_count)+'.pkl'
+        torch.save(w_glob, baseParasFile)
 
-        # Add the aggregated paras file to ipfs network
+        # Add the paras file of base model to ipfs network for training in this sharding
         while 1:
-            fileHash, sttCodeAdd = usefulTools.ipfsAddFile(aggParasFile)
-            if sttCodeAdd == 0:
-                print('\nThe aggregated parasfile ' + aggParasFile + ' has been uploaded!\n')
+            basefileHash, baseSttCode = usefulTools.ipfsAddFile(baseParasFile)
+            if baseSttCode == 0:
+                print('\nThe base mode parasfile ' + baseParasFile + ' has been uploaded!\n')
+                print('And the fileHash is ' + basefileHash + '\n')
                 break
             else:
-                print('\nFailed to uploaded the aggregated parasfile ' + aggParasFile + ' !\n')
-        fileHash = fileHash.strip()
-        new_trans = transaction.Transaction(time.time(), nodeNum,'', fileHash, apv_trans_name)
+                print('Error: ' + basefileHash)
+                print('\nFailed to uploaded the aggregated parasfile ' + baseParasFile + ' !\n')
+
+        # Task release & model aggregation
+        if iteration_count == 0:
+            ## Task release
+            taskEpochs = args.epochs
+            taskInitStatus = "start"
+            taskUsersFrac = args.frac
+            while 1:
+                taskRelease = subprocess.Popen(args=['../commonComponent/interRun.sh release '+taskID+' '+str(taskEpochs)+' '+taskInitStatus+' '+str(taskUsersFrac)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                trOuts, trErrs = taskRelease.communicate(timeout=10)
+                if taskRelease.poll() == 0:
+                    print(trOuts)
+                    print('*** ' + taskID + ' has been released! ***\n')
+                    break
+                else:
+                    print(trErrs)
+                    print('*** Failed to release ' + taskID + ' ! ***\n')
+
+            ## Publish the initialization model
+            ### taskEpoch template {"Args":["set","taskID","{"epoch":1,"status":"training","paras":"fileHash"}"]}
+            while 1:
+                spcAggModelPublish = subprocess.Popen(args=['../commonComponent/interRun.sh aggregated '+taskID+' 0 training '+basefileHash], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                aggPubOuts, aggPubErrs = spcAggModelPublish.communicate(timeout=10)
+                if spcAggModelPublish.poll() == 0:
+                    print(aggPubOuts)
+                    print('*** The init aggModel of ' + taskID + ' has been published! ***\n')
+                    break
+                else:
+                    print(aggPubErrs)
+                    print('*** Failed to publish the init aggModel of ' + taskID + ' ! ***\n')
+        else:
+            currentEpoch = 1
+            while (currentEpoch <= args.epochs):
+                flagList = set(copy.deepcopy(deviceSelected))
+                w_locals = []
+                while (len(flagList) != 0):
+                    flagSet = set()
+                    lock = threading.Lock()
+                    for deviceID in flagList:
+                        t = threading.Thread(target=usefulTools.queryLocal,args=(lock,taskID,deviceID,currentEpoch,flagSet,))
+                        t.start()
+                        ts.append(t)
+                    for t in ts:
+                        t.join()
+                    time.sleep(2)
+                    flagList = flagList - flagSet
+                for deviceID in flagSet:
+                    localFileName = './clientS/paras/' + taskID + deviceID + 'Epoch' + str(currentEpoch) + '.pkl'
+                    net_glob.load_state_dict(torch.load(localFileName))
+                    tmpParas = net_glob.state_dict()
+                    w_locals.append(copy.deepcopy(tmpParas))
+                w_glob = FedAvg(w_locals)
+                aggEchoParasFile = './clientS/paras/baseModelParas-iter'+str(iteration_count)+'.pkl'
+                torch.save(w_glob, aggEchoParasFile)
+                
+                # aggEchoParasFile is the paras of this sharding trained in current epoch
+                # Add the aggregated paras file to ipfs network
+                while 1:
+                    aggEchoFileHash, sttCodeAdd = usefulTools.ipfsAddFile(aggEchoParasFile)
+                    if sttCodeAdd == 0:
+                        print('\nThe aggregated parasfile ' + aggEchoParasFile + ' has been uploaded!\n')
+                        print('And the fileHash is ' + aggEchoFileHash + '\n')
+                        break
+                    else:
+                        print('Error: ' + aggEchoFileHash)
+                        print('\nFailed to uploaded the aggregated parasfile ' + aggEchoParasFile + ' !\n')
+
+                ## Publish the aggregated model paras trained in this epoch
+                ### taskEpoch template {"Args":["set","taskID","{"epoch":1,"status":"training","paras":"fileHash"}"]}
+                while 1:
+                    epochAggModelPublish = subprocess.Popen(args=['../commonComponent/interRun.sh aggregated '+taskID+' '+str(currentEpoch)+' training '+aggEchoFileHash], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                    aggPubOuts, aggPubErrs = epochAggModelPublish.communicate(timeout=10)
+                    if epochAggModelPublish.poll() == 0:
+                        print(aggPubOuts)
+                        print('*** The aggModel of ' + taskID + ' has been published! ***\n')
+                        break
+                    else:
+                        print(aggPubErrs)
+                        print('*** Failed to publish the init aggModel of ' + taskID + ' ! ***\n')
+                currentEpoch += 1
         
+        new_trans = transaction.Transaction(time.time(), nodeNum,'', aggEchoFileHash, apv_trans_name)
+
         # upload the trans to DAG network
         dagClient.trans_upload(aim_addr, new_trans)
 
@@ -150,7 +235,7 @@ def main(aim_addr='127.0.0.1'):
         print('******************\n')
         print('*** The trans generated in the iteration #%d had been uploaded!'%iteration_count+' ***\n')
         print('*************************************************************************************\n')
-
+        iteration_count += 1
         time.sleep(10)
 
 if __name__ == '__main__':

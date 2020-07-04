@@ -11,6 +11,7 @@ from torchvision import datasets, transforms
 import torch
 from json import dumps
 import sys
+import argparse
 
 from utils.sampling import mnist_iid, mnist_noniid, cifar_iid
 from utils.options import args_parser
@@ -30,6 +31,8 @@ def modelBuild():
     # build model
     args = args_parser()
     args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
+
+    print('*** The epochs is set as' + str(args.epochs))
 
     # load dataset and split users
     if args.dataset == 'mnist':
@@ -65,11 +68,15 @@ def modelBuild():
         net_glob = MLP(dim_in=len_in, dim_hidden=200, dim_out=args.num_classes).to(args.device)
     else:
         exit('Error: unrecognized model')
-        
+
     print(net_glob)
 
-    return net_glob
+    return net_glob, args, dataset_train, dataset_test, dict_users
+
+def argsTest():
+    args = args_parser()
+    return args
 
 if __name__ == '__main__':
-    net_test = modelBuild()
-    print(net_test)
+    # net_glob, args, dataset_train, dataset_test, dict_users = modelBuild()
+    # print(args.device)
