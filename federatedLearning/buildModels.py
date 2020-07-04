@@ -1,6 +1,12 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Python version: 3.6
+# ******************************************************
+# Filename     : buildModels.py
+# Author       : Shuo Yuan 
+# Email        : ishawnyuan@gmail.com
+# Blog         : https://iyuanshuo.com
+# Last modified: 2020-06-26 23:05
+# Description  : 
+# ******************************************************
 
 import matplotlib
 matplotlib.use('Agg')

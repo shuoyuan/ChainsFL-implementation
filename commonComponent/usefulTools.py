@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # ******************************************************
-# Filename     : test.py
+# Filename     : usefulTools.py
 # Author       : Shuo Yuan 
 # Email        : ishawnyuan@gmail.com
 # Blog         : https://iyuanshuo.com
-# Last modified: 2020-07-04 12:58
+# Last modified: 2020-07-01 12:58
 # Description  : 
 # ******************************************************
 
@@ -14,8 +14,10 @@ import json
 import time
 import subprocess
 
-# Download the file using hashValue from ipfs network
 def ipfsGetFile(hashValue, fileName):
+    """
+    Use hashValue to download the file from IPFS network.
+    """
     ipfsGet = subprocess.Popen(args=['ipfs get ' + hashValue + ' -o ' + fileName], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
     outs, errs = ipfsGet.communicate(timeout=10)
     if ipfsGet.poll() == 0:
@@ -24,6 +26,9 @@ def ipfsGetFile(hashValue, fileName):
         return errs.strip(), ipfsGet.poll()
 
 def ipfsAddFile(fileName):
+    """
+    Upload the file to IPFS network and return the exclusive fileHash value.
+    """
     ipfsAdd = subprocess.Popen(args=['ipfs add ' + fileName + ' | tr \' \' \'\\n\' | grep Qm'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
     outs, errs = ipfsAdd.communicate(timeout=10)
     if ipfsAdd.poll() == 0:
@@ -32,6 +37,9 @@ def ipfsAddFile(fileName):
         return errs.strip(), ipfsAdd.poll()
 
 def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
+    """
+    Query and download the paras file of local model trained by the device.
+    """
         localQuery = subprocess.Popen(args=['../commonComponent/interRun.sh query '+deviceID], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
         outs, errs = localQuery.communicate(timeout=15)
         if localQuery.poll() == 0:

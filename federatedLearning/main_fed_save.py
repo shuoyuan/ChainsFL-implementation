@@ -1,6 +1,12 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Python version: 3.6
+# ******************************************************
+# Filename     : main_fed_save.py
+# Author       : Shuo Yuan 
+# Email        : ishawnyuan@gmail.com
+# Blog         : https://iyuanshuo.com
+# Last modified: 2020-06-02 16:08
+# Description  : 
+# ******************************************************
 
 import matplotlib
 matplotlib.use('Agg')

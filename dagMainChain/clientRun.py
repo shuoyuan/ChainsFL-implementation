@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+# ******************************************************
+# Filename     : clientRun.py
+# Author       : Shuo Yuan 
+# Email        : ishawnyuan@gmail.com
+# Blog         : https://iyuanshuo.com
+# Last modified: 2020-06-18 21:10
+# Description  : 
+# ******************************************************
+
 import sys
 from dagComps import transaction
 import socket
@@ -32,9 +42,9 @@ from models.test import test_img
 import buildModels
 
 
-# The number of tips confirmed by the new transaction
+# Number of tips confirmed by the new transaction
 alpha = 2
-## The number of tips needs to be kept greater than 3
+## Number of tips needs to be kept greater than 3
 beta = 3
 
 nodeNum = 1
@@ -134,7 +144,7 @@ def main(aim_addr='127.0.0.1'):
         baseParasFile = './clientS/paras/baseModelParas-iter'+str(iteration_count)+'.pkl'
         torch.save(w_glob, baseParasFile)
 
-        # Add the paras file of base model to ipfs network for training in this sharding
+        # Add the paras file of base model to ipfs network for sharding training
         while 1:
             basefileHash, baseSttCode = usefulTools.ipfsAddFile(baseParasFile)
             if baseSttCode == 0:
