@@ -95,7 +95,7 @@ def main(aim_addr='127.0.0.1'):
     while 1:
         # Choose and require the apv trans
         apv_trans_name = []
-        if iteration_count == 0:
+        if iteration_count <= 1:
             apv_trans_name.append('GenesisBlock')
         else:
             tips_list = 'tip_list'
