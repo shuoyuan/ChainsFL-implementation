@@ -143,17 +143,17 @@ def main(aim_addr='127.0.0.1'):
             dagClient.client_trans_require(aim_addr, apvTrans, apvTransFile)
             print('This approved trans is ', apvTrans, ', and the file is ', apvTransFile)
             apvTransInfo = transaction.read_transaction(apvTransFile)
-            apvParasFile = './clientS/paras/' + apvTrans + 'pkl'
+            apvParasFile = './clientS/paras/' + apvTrans + '.pkl'
 
             while 1:
                 fileGetStatus, sttCodeGet = usefulTools.ipfsGetFile(apvTransInfo.model_para, apvParasFile)
+                print('The filehash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
                 if sttCodeGet == 0:
                     print(fileGetStatus)
                     print('\nThe apv parasfile ' + apvParasFile + ' has been downloaded!\n')
                     break
                 else:
                     print('\nFailed to download the apv parasfile ' + apvParasFile + ' !\n')
-            print('The filehash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
 
             # load the apv paras
             net_glob.load_state_dict(torch.load(apvParasFile,map_location=torch.device('cpu')))
