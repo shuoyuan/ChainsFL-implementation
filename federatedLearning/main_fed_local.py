@@ -101,16 +101,14 @@ if __name__ == '__main__':
                 allDeviceName = []
                 for i in range(args.num_users):
                     allDeviceName.append("device"+("{:0>5d}".format(i)))
-                ## select the device
-                deviceSelected = []
-                for idx in idxs_users:
-                    deviceSelected.append(allDeviceName[idx])
+                print('The idxs of selected device are\n', idxs_users)
+
                 loss_locals = []
                 for idx in idxs_users:
                     local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
                     w, loss = local.train(net=copy.deepcopy(net_glob).to(args.device))
                     loss_locals.append(copy.deepcopy(loss))
-                    devLocFile = './data/local/' + deviceSelected[idx] + '-' + taskID + '-epoch' + str(currentEpoch) + '.pkl'
+                    devLocFile = './data/local/' + allDeviceName[idx] + '-' + taskID + '-epoch' + str(currentEpoch) + '.pkl'
                     torch.save(w, devLocFile)
                     while 1:
                         localAdd, localAddStt = usefulTools.ipfsAddFile(devLocFile)
@@ -120,15 +118,15 @@ if __name__ == '__main__':
                         else:
                             print('Failed to add %s to the IPFS network!'%devLocFile)
                     while 1:
-                        localRelease = subprocess.Popen(args=['../commonComponent/interRun.sh local '+deviceSelected[idx]+' '+taskID+' '+str(currentEpoch)+' '+localAdd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                        localRelease = subprocess.Popen(args=['../commonComponent/interRun.sh local '+allDeviceName[idx]+' '+taskID+' '+str(currentEpoch)+' '+localAdd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         localOuts, localErrs = localRelease.communicate(timeout=10)
                         if localRelease.poll() == 0:
                             print(localOuts)
-                            print('*** Local model train in epoch ' + str(currentEpoch) + ' of ' + deviceSelected[idx] + ' has been released! ***\n')
+                            print('*** Local model train in epoch ' + str(currentEpoch) + ' of ' + allDeviceName[idx] + ' has been released! ***\n')
                             break
                         else:
                             print(localErrs)
-                            print('*** Failed to release Local model train in epoch ' + str(currentEpoch) + ' of ' + deviceSelected[idx] + '! ***\n')
+                            print('*** Failed to release Local model train in epoch ' + str(currentEpoch) + ' of ' + allDeviceName[idx] + '! ***\n')
                             time.sleep(2)
 
                 loss_avg = sum(loss_locals) / len(loss_locals)
