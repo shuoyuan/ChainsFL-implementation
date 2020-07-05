@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # ******************************************************
-# Filename     : main_fed_save.py
+# Filename     : main_fed_local.py
 # Author       : Shuo Yuan 
 # Email        : ishawnyuan@gmail.com
 # Blog         : https://iyuanshuo.com
@@ -24,6 +24,7 @@ import sys
 import json
 import pickle
 import subprocess
+import datetime
 
 # Common Components
 sys.path.append('../commonComponent')
@@ -158,7 +159,7 @@ if __name__ == '__main__':
             plt.figure()
             plt.plot(range(len(loss_train)), loss_train)
             plt.ylabel('train_loss')
-            plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration))
+            plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}_{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration, datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
             print('Current iteration %d has been completed!'%iteration)
             iteration += 1
                 
