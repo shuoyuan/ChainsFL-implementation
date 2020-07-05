@@ -52,7 +52,7 @@ if __name__ == '__main__':
     ## Used to check whether it is a new task
     checkTaskID = ''
 
-    iteration = 1
+    iteration = 0
     while 1:
         taskRelInfo = {}
         # taskRelease info template {"taskID":"task1994","epoch":10,"status":"start","usersFrac":0.1}
@@ -78,7 +78,6 @@ if __name__ == '__main__':
                 break
         if taskInfo['status'] == 'done' or checkTaskID == taskID:
             print('*** %s has been completed! ***\n'%taskID)
-            iteration = iteration - 1
             time.sleep(5)
         else:
             print('\n******************************* Iteration #%d starting ********************************'%iteration+'\n')
@@ -103,7 +102,7 @@ if __name__ == '__main__':
                             print('*************************************************************************************\n')
                             time.sleep(2)
                 ## download the paras file of aggregated model for training in current epoch 
-                aggBasModFil = './data/paras/aggBaseModel-epoch' + str(currentEpoch-1) + '.pkl'
+                aggBasModFil = './data/paras/aggModel-iter-' + str(iteration) + '-epoch-' + str(currentEpoch-1) + '.pkl'
                 while 1:
                     aggBasMod, aggBasModStt = usefulTools.ipfsGetFile(taskInfoEpo['paras'], aggBasModFil)
                     if aggBasModStt == 0:
@@ -168,7 +167,7 @@ if __name__ == '__main__':
             print('\n*********************************** Iteration #%d ***********************************'%iteration+'\n')
             print('Current iteration %d has been completed!'%iteration)
             print('\n*************************************************************************************\n')
-        iteration += 1
+            iteration += 1
                 
             # testing
             # net_glob.eval()
