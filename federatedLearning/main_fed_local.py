@@ -84,20 +84,21 @@ if __name__ == '__main__':
                     taskInQueEpo, taskInQueEpoStt = usefulTools.simpleQuery(taskID)
                     if taskInQueEpoStt == 0:
                         taskInfoEpo = json.loads(taskInQueEpo)
-                        print('\n******************')
-                        print('(In loop) Latest task info is %s!\n'%taskInQueEpo)
-                        print('******************\n')
-                        break
+                        if int(taskInfoEpo['epoch']) == (currentEpoch-1):
+                            print('\n******************')
+                            print('(In loop) Latest task info is %s!\n'%taskInQueEpo)
+                            print('******************\n')
+                            break
                 
                 ## download the paras file of aggregated model for training in current epoch 
                 aggBasModFil = './data/paras/aggBaseModel-epoch' + str(currentEpoch-1) + '.pkl'
                 while 1:
                     aggBasMod, aggBasModStt = usefulTools.ipfsGetFile(taskInfoEpo['paras'], aggBasModFil)
                     if aggBasModStt == 0:
-                        print('\nThe paras file of aggregated model for epoch %d training has been downloaded!\n'%currentEpoch)
+                        print('\nThe paras file of aggregated model for epoch %s training has been downloaded!\n'%str(taskInfoEpo['epoch']))
                         break
                     else:
-                        print('\nFailed to download the paras file of aggregated model for epoch %d training!\n'%currentEpoch)
+                        print('\nFailed to download the paras file of aggregated model for epoch %s training!\n'%str(taskInfoEpo['epoch']))
                 # build network
                 net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
                 net_glob.train()
