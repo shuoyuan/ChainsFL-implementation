@@ -209,7 +209,7 @@ def main(aim_addr='127.0.0.1'):
                     ts.append(t)
                 for t in ts:
                     t.join()
-                time.sleep(2)
+                time.sleep(10)
                 flagList = flagList - flagSet
             for deviceID in flagSet:
                 localFileName = './clientS/paras/' + taskID + deviceID + 'Epoch' + str(currentEpoch) + '.pkl'
