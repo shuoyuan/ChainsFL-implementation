@@ -219,12 +219,12 @@ def main(aim_addr='127.0.0.1'):
                 time.sleep(2)
                 flagList = flagList - flagSet
             for deviceID in flagSet:
-                localFileName = './clientS/paras/' + taskID + deviceID + 'Epoch' + str(currentEpoch) + '.pkl'
+                localFileName = './clientS/paras/' + taskID + '-' + deviceID + '-Epoch-' + str(currentEpoch) + '.pkl'
                 net_glob.load_state_dict(torch.load(localFileName))
                 tmpParas = net_glob.state_dict()
                 w_locals.append(copy.deepcopy(tmpParas))
             w_glob = FedAvg(w_locals)
-            aggEchoParasFile = './clientS/paras/baseModelParas-iter'+str(iteration_count)+'.pkl'
+            aggEchoParasFile = './clientS/paras/aggModel-iter-'+str(iteration_count)+'-epoch-'+str(currentEpoch)+'.pkl'
             torch.save(w_glob, aggEchoParasFile)
             
             # aggEchoParasFile is the paras of this sharding trained in current epoch
@@ -270,7 +270,7 @@ def main(aim_addr='127.0.0.1'):
         print('The trans generated in the iteration #%d had been uploaded!'%iteration_count)
         print('*************************************************************************************\n')
         iteration_count += 1
-        time.sleep(10)
+        time.sleep(2)
 
 if __name__ == '__main__':
     main('127.0.0.1')
