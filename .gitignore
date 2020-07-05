@@ -16,12 +16,15 @@ federatedLearning/save/
 *.json
 *.pkl
 *.txt
+*.pyc
 
 # macOS
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+federatedLearning/__pycache__/
+federatedLearning/models/__pycache__/
 *.py[cod]
 *$py.class
 
