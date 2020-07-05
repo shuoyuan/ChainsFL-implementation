@@ -93,7 +93,7 @@ def simpleQuery(key):
 if __name__ == '__main__':
     taskInfo = {}
     while 1:
-        outs, stt = simpleQuery("device00091")
+        outs, stt = simpleQuery("task109210")
         if stt == 0:
             print(outs)
             taskInfo = json.loads(outs)
