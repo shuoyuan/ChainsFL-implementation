@@ -51,15 +51,15 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
                 outs, stt = ipfsGetFile(localDetail['paras'], localFileName)
                 if stt == 0:
                     break
-                else:
-                    print(outs.strip())
+                # else:
+                #     print(outs.strip())
             lock.acquire()
             t1 = flagSet
             t1.add(deviceID)
             flagSet = t1
             lock.release()
-        else:
-            print('*** This device %s has not updated its model! ***'%(deviceID))
+        # else:
+        #     print('*** This device %s has not updated its model! ***'%(deviceID))
     else:
         print("Failed to query this device!", errs)
 
