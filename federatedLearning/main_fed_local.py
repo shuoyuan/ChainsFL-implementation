@@ -55,6 +55,7 @@ if __name__ == '__main__':
         while 1:
             taskInQue, taskInQueStt = usefulTools.simpleQuery(taskID)
             if taskInQueStt == 0:
+                print(taskInQue)
                 taskInfo = json.loads(taskInQue)
                 print('Latest task info is %s!\n'%taskInQue)
                 break
