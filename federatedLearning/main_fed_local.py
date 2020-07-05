@@ -51,12 +51,13 @@ if __name__ == '__main__':
         
         # task info template {"epoch":"0","status":training,"paras":"QmSaAhKsxELzzT1uTtnuBacgfRjhehkzz3ybwnrkhJDbZ2"}
         taskID = taskRelInfo['taskID']
-        print('The taskID is',taskID)
+        print('\n**********')
+        print('Current task is',taskID)
+        print('**********\n')
         taskInfo = {}
         while 1:
             taskInQue, taskInQueStt = usefulTools.simpleQuery(taskID)
             if taskInQueStt == 0:
-                print('The taskInQue is ',taskInQue)
                 taskInfo = json.loads(taskInQue)
                 print('Latest task info is %s!\n'%taskInQue)
                 break

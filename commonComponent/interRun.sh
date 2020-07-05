@@ -67,7 +67,7 @@ function taskRelease() {
 function aggModelPub() {
   ORG=$1
   setEnvironments $ORG
-  invoke="peer chaincode invoke -o localhost:7050 --tls true --cafile ${FabricL}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses localhost:7051 --tlsRootCertFiles ${FabricL}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${FabricL}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -C mychannel -n sacc -c '{\"Args\":[\"set\",\"${2}\",\"{\\\"epoch\\\":\\\"$3\\\",\\\"status\\\":$4,\\\"paras\\\":\\\"$5\\\"}\"]}'"
+  invoke="peer chaincode invoke -o localhost:7050 --tls true --cafile ${FabricL}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem --peerAddresses localhost:7051 --tlsRootCertFiles ${FabricL}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --peerAddresses localhost:9051 --tlsRootCertFiles ${FabricL}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt -C mychannel -n sacc -c '{\"Args\":[\"set\",\"${2}\",\"{\\\"epoch\\\":$3,\\\"status\\\":\\\"$4\\\",\\\"paras\\\":\\\"$5\\\"}\"]}'"
   eval ${invoke}
 }
 
