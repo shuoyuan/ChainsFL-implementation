@@ -88,9 +88,10 @@ def main(aim_addr='127.0.0.1'):
     deviceSelected = []
     m = max(int(args.frac * args.num_users), 1) # args.frac is the fraction of users
     idxs_users = np.random.choice(range(args.num_users), m, replace=False)
-    print('\n******************')
-    print('The idxs of selected device are\n', idxs_users)
-    print('******************\n')
+
+    print('\n**************************** Idxs of selected devices *****************************')
+    print('The idxs of selected devices are\n', idxs_users)
+    print('*************************************************************************************\n')
 
     ## Exchange the info of selected device with fabric
     with open('../commonComponent/selectedDeviceIdxs.txt', 'wb') as f:
@@ -119,25 +120,25 @@ def main(aim_addr='127.0.0.1'):
             else:
                 apv_trans_name = random.sample(tips_dict.keys(), alpha)
 
-        print('\n******************')
+        print('\n*********************************** Tips approved ***********************************')
         print('The approved tips are ', apv_trans_name)
-        print('******************\n')
+        print('*************************************************************************************\n')
 
         # Get the trans file and the model paras file
         w_apv = []
         for apvTrans in apv_trans_name:
             apvTransFile =  './clientS/' + apvTrans + '.json'
             dagClient.client_trans_require(aim_addr, apvTrans, apvTransFile)
-            print('This approved trans is ', apvTrans, ', and the file is ', apvTransFile)
+            print('\nThis approved trans is ', apvTrans, ', and the file is ', apvTransFile)
             apvTransInfo = transaction.read_transaction(apvTransFile)
             apvParasFile = './clientS/paras/' + apvTrans + '.pkl'
 
             while 1:
                 fileGetStatus, sttCodeGet = usefulTools.ipfsGetFile(apvTransInfo.model_para, apvParasFile)
-                print('The filehash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!\n')
+                print('The filehash of this approved trans is ' + apvTransInfo.model_para + ', and the file is ' + apvParasFile + '!')
                 if sttCodeGet == 0:
-                    print(fileGetStatus)
-                    print('\nThe apv parasfile ' + apvParasFile + ' has been downloaded!\n')
+                    print(fileGetStatus.strip())
+                    print('The apv parasfile ' + apvParasFile + ' has been downloaded!\n')
                     break
                 else:
                     print(fileGetStatus)
@@ -159,7 +160,7 @@ def main(aim_addr='127.0.0.1'):
         while 1:
             basefileHash, baseSttCode = usefulTools.ipfsAddFile(baseParasFile)
             if baseSttCode == 0:
-                print('\nThe base mode parasfile ' + baseParasFile + ' has been uploaded!\n')
+                print('\nThe base mode parasfile ' + baseParasFile + ' has been uploaded!')
                 print('And the fileHash is ' + basefileHash + '\n')
                 break
             else:
@@ -250,8 +251,8 @@ def main(aim_addr='127.0.0.1'):
                 aggPubOuts, aggPubErrs = epochAggModelPublish.communicate(timeout=10)
                 if epochAggModelPublish.poll() == 0:
                     print('\n******************')
-                    print('The info of task ' + taskID + ' is ' + aggPubOuts)
-                    print('*** The model aggregated in epoch ' + str(currentEpoch) + ' for ' + taskID + ' has been published! ***')
+                    print('The info of task ' + taskID + ' is ' + aggPubOuts.strip())
+                    print('The model aggregated in epoch ' + str(currentEpoch) + ' for ' + taskID + ' has been published!')
                     print('******************\n')
                     break
                 else:
@@ -264,10 +265,9 @@ def main(aim_addr='127.0.0.1'):
         # upload the trans to DAG network
         dagClient.trans_upload(aim_addr, new_trans)
 
-        print('\n******************')
+        print('\n******************************* Transaction upload *******************************')
         print('The details of this trans are', new_trans)
-        print('******************\n')
-        print('*** The trans generated in the iteration #%d had been uploaded!'%iteration_count+' ***\n')
+        print('The trans generated in the iteration #%d had been uploaded!'%iteration_count)
         print('*************************************************************************************\n')
         iteration_count += 1
         time.sleep(10)

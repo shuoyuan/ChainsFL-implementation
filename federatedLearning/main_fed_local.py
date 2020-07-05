@@ -43,6 +43,9 @@ if __name__ == '__main__':
     if os.path.exists('./data/local'):
         shutil.rmtree('./data/local')
     os.mkdir('./data/local')
+    
+    ## Used to check whether it is a new task
+    checkTaskID = ''
 
     while 1:
         iteration = 1
@@ -52,28 +55,28 @@ if __name__ == '__main__':
             taskRelQue, taskRelQueStt = usefulTools.simpleQuery('taskRelease')
             if taskRelQueStt == 0:
                 taskRelInfo = json.loads(taskRelQue)
-                print('\n******************')
+                print('\n*************************************************************************************')
                 print('Latest task release status is %s!'%taskRelQue)
-                print('******************\n')
+                print('*************************************************************************************\n')
                 break
         taskRelEpoch = int(taskRelInfo['epoch'])
         
         # task info template {"epoch":"0","status":training,"paras":"QmSaAhKsxELzzT1uTtnuBacgfRjhehkzz3ybwnrkhJDbZ2"}
         taskID = taskRelInfo['taskID']
-        print('\n******************')
+        print('\n*************************************************************************************')
         print('Current task is',taskID)
-        print('******************\n')
+        print('*************************************************************************************\n')
         taskInfo = {}
         while 1:
             taskInQue, taskInQueStt = usefulTools.simpleQuery(taskID)
             if taskInQueStt == 0:
                 taskInfo = json.loads(taskInQue)
-                print('\n******************')
+                print('\n*************************************************************************************')
                 print('Latest task info is %s!'%taskInQue)
-                print('******************\n')
+                print('*************************************************************************************\n')
                 break
-        if taskInfo['status'] == 'done':
-            print('*** The latest task has been completed! ***\n')
+        if taskInfo['status'] == 'done' or checkTaskID == taskID:
+            print('*** %s has been completed! ***\n'%taskID)
             time.sleep(5)
         else:
             currentEpoch = int(taskInfo['epoch']) + 1
@@ -85,9 +88,9 @@ if __name__ == '__main__':
                     if taskInQueEpoStt == 0:
                         taskInfoEpo = json.loads(taskInQueEpo)
                         if int(taskInfoEpo['epoch']) == (currentEpoch-1):
-                            print('\n******************')
-                            print('(In loop) Latest task info is %s!\n'%taskInQueEpo)
-                            print('******************\n')
+                            print('\n*************************************************************************************')
+                            print('(In loop) Latest task info is %s!'%taskInQueEpo)
+                            print('*************************************************************************************\n')
                             break
                 
                 ## download the paras file of aggregated model for training in current epoch 
@@ -114,9 +117,10 @@ if __name__ == '__main__':
                 allDeviceName = []
                 for i in range(args.num_users):
                     allDeviceName.append("device"+("{:0>5d}".format(i)))
-                print('\n******************')
-                print('The idxs of selected device are\n', idxs_users)
-                print('******************\n')
+
+                print('\n**************************** Idxs of selected devices *****************************')
+                print('The idxs of selected devices are\n', idxs_users)
+                print('*************************************************************************************\n')
 
                 loss_locals = []
                 for idx in idxs_users:
@@ -137,19 +141,19 @@ if __name__ == '__main__':
                         localRelease = subprocess.Popen(args=['../commonComponent/interRun.sh local '+allDeviceName[idx]+' '+taskID+' '+str(currentEpoch)+' '+localAdd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         localOuts, localErrs = localRelease.communicate(timeout=10)
                         if localRelease.poll() == 0:
-                            print(localOuts)
-                            print('*** Local model train in epoch ' + str(currentEpoch) + ' of ' + allDeviceName[idx] + ' has been released! ***\n')
+                            print('*** Local model train in epoch ' + str(currentEpoch) + ' of ' + allDeviceName[idx] + ' has been uploaded! ***\n')
                             break
                         else:
-                            print(localErrs)
+                            print(localErrs.strip())
                             print('*** Failed to release Local model train in epoch ' + str(currentEpoch) + ' of ' + allDeviceName[idx] + '! ***\n')
                             time.sleep(2)
-                currentEpoch += 1
 
                 loss_avg = sum(loss_locals) / len(loss_locals)
                 print('Epoch {:3d}, Average loss {:.3f}'.format(currentEpoch, loss_avg))
                 loss_train.append(loss_avg)
+                currentEpoch += 1
 
+            checkTaskID = taskID
             # plot loss curve
             plt.figure()
             plt.plot(range(len(loss_train)), loss_train)
