@@ -57,23 +57,19 @@ if __name__ == '__main__':
             if taskRelQueStt == 0:
                 taskRelInfo = json.loads(taskRelQue)
                 print('\n*************************************************************************************')
-                print('Latest task release status is %s!'%taskRelQue)
-                print('*************************************************************************************\n')
+                print('Latest task release status is %s!'%taskRelQue.strip())
                 break
         taskRelEpoch = int(taskRelInfo['epoch'])
         
         # task info template {"epoch":"0","status":training,"paras":"QmSaAhKsxELzzT1uTtnuBacgfRjhehkzz3ybwnrkhJDbZ2"}
         taskID = taskRelInfo['taskID']
-        print('\n*************************************************************************************')
         print('Current task is',taskID)
-        print('*************************************************************************************\n')
         taskInfo = {}
         while 1:
             taskInQue, taskInQueStt = usefulTools.simpleQuery(taskID)
             if taskInQueStt == 0:
                 taskInfo = json.loads(taskInQue)
-                print('\n*************************************************************************************')
-                print('Latest task info is %s!'%taskInQue)
+                print('Latest task info is %s!'%taskInQue.strip())
                 print('*************************************************************************************\n')
                 break
         if taskInfo['status'] == 'done' or checkTaskID == taskID:
@@ -81,6 +77,10 @@ if __name__ == '__main__':
             iteration = iteration - 1
             time.sleep(5)
         else:
+
+            print('\n******************************* Iteration #%d starting ********************************'%iteration+'\n')
+            print('Iteration %d starting!'%iteration)
+            print('\n*************************************************************************************\n')
             currentEpoch = int(taskInfo['epoch']) + 1
             loss_train = []
             while currentEpoch <= taskRelEpoch:
@@ -90,8 +90,8 @@ if __name__ == '__main__':
                     if taskInQueEpoStt == 0:
                         taskInfoEpo = json.loads(taskInQueEpo)
                         if int(taskInfoEpo['epoch']) == (currentEpoch-1):
-                            print('\n*************************************************************************************')
-                            print('(In loop) Latest task info is %s!'%taskInQueEpo)
+                            print('\n******************************** Latest status of %s ********************************'%taskID)
+                            print('(In loop) Latest task info is \n %s!'%taskInQueEpo)
                             print('*************************************************************************************\n')
                             break
                 
@@ -161,7 +161,9 @@ if __name__ == '__main__':
             plt.plot(range(len(loss_train)), loss_train)
             plt.ylabel('train_loss')
             plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}_{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration, datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
+            print('\n*********************************** Iteration #%d ***********************************'%iteration+'\n')
             print('Current iteration %d has been completed!'%iteration)
+            print('\n*************************************************************************************\n')
         iteration += 1
                 
             # testing
