@@ -133,7 +133,7 @@ if __name__ == '__main__':
                     local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
                     w, loss = local.train(net=copy.deepcopy(net_glob).to(args.device))
                     loss_locals.append(copy.deepcopy(loss))
-                    devLocFile = './data/local/' + allDeviceName[idx] + '-' + taskID + '-epoch-' + str(currentEpoch) + '.pkl'
+                    devLocFile = './data/local/' + taskID + '-' + allDeviceName[idx] + '-epoch-' + str(currentEpoch) + '.pkl'
                     torch.save(w, devLocFile)
                     while 1:
                         localAdd, localAddStt = usefulTools.ipfsAddFile(devLocFile)

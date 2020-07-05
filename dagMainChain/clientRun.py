@@ -218,8 +218,8 @@ def main(aim_addr='127.0.0.1'):
                     t.join()
                 time.sleep(2)
                 flagList = flagList - flagSet
-            for deviceID in flagSet:
-                localFileName = './clientS/paras/' + taskID + '-' + deviceID + '-Epoch-' + str(currentEpoch) + '.pkl'
+            for deviceID in deviceSelected:
+                localFileName = './clientS/paras/' + taskID + '-' + deviceID + '-epoch-' + str(currentEpoch) + '.pkl'
                 net_glob.load_state_dict(torch.load(localFileName))
                 tmpParas = net_glob.state_dict()
                 w_locals.append(copy.deepcopy(tmpParas))
