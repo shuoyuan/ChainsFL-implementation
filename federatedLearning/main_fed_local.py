@@ -77,7 +77,6 @@ if __name__ == '__main__':
             iteration = iteration - 1
             time.sleep(5)
         else:
-
             print('\n******************************* Iteration #%d starting ********************************'%iteration+'\n')
             print('Iteration %d starting!'%iteration)
             print('\n*************************************************************************************\n')
@@ -90,11 +89,15 @@ if __name__ == '__main__':
                     if taskInQueEpoStt == 0:
                         taskInfoEpo = json.loads(taskInQueEpo)
                         if int(taskInfoEpo['epoch']) == (currentEpoch-1):
-                            print('\n******************************** Latest status of %s ********************************'%taskID)
+                            print('\n****************************** Latest status of %s ******************************'%taskID)
                             print('(In loop) Latest task info is \n %s!'%taskInQueEpo)
                             print('*************************************************************************************\n')
                             break
-                
+                        else:
+                            print('\n*************************** %s has not been updated ***************************'%taskID)
+                            print('(In loop) Latest task info is \n %s!'%taskInQueEpo)
+                            print('*************************************************************************************\n')
+                            time.sleep(2)
                 ## download the paras file of aggregated model for training in current epoch 
                 aggBasModFil = './data/paras/aggBaseModel-epoch' + str(currentEpoch-1) + '.pkl'
                 while 1:
