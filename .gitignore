@@ -15,6 +15,7 @@ federatedLearning/save/
 *.pdf
 *.json
 *.pkl
+*.txt
 
 # macOS
 .DS_Store
