@@ -78,6 +78,7 @@ if __name__ == '__main__':
                 break
         if taskInfo['status'] == 'done' or checkTaskID == taskID:
             print('*** %s has been completed! ***\n'%taskID)
+            iteration = iteration - 1
             time.sleep(5)
         else:
             currentEpoch = int(taskInfo['epoch']) + 1
@@ -159,9 +160,9 @@ if __name__ == '__main__':
             plt.figure()
             plt.plot(range(len(loss_train)), loss_train)
             plt.ylabel('train_loss')
-            plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration))
+            plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}_{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration, datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
             print('Current iteration %d has been completed!'%iteration)
-            iteration += 1
+        iteration += 1
                 
             # testing
             # net_glob.eval()
