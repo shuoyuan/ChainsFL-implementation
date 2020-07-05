@@ -228,8 +228,11 @@ def main(aim_addr='127.0.0.1'):
 
             ## Publish the aggregated model paras trained in this epoch
             ### taskEpoch template {"Args":["set","taskID","{"epoch":1,"status":"training","paras":"fileHash"}"]}
+            taskStatus = 'training'
+            if currentEpoch == args.epochs:
+                taskStatus = 'done'
             while 1:
-                epochAggModelPublish = subprocess.Popen(args=['../commonComponent/interRun.sh aggregated '+taskID+' '+str(currentEpoch)+' training '+aggEchoFileHash], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+                epochAggModelPublish = subprocess.Popen(args=['../commonComponent/interRun.sh aggregated '+taskID+' '+str(currentEpoch)+' '+taskStatus+' '+aggEchoFileHash], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                 aggPubOuts, aggPubErrs = epochAggModelPublish.communicate(timeout=10)
                 if epochAggModelPublish.poll() == 0:
                     print(aggPubOuts)
