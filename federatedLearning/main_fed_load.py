@@ -28,15 +28,15 @@ if __name__ == '__main__':
     w_glob = net_glob.state_dict()
 
     # w_apv = []
-    # fileName = os.listdir("D:\\test2")
+    # fileName = os.listdir("D:\\test")
     # for item in fileName:
-    #     net_glob.load_state_dict(torch.load('D:\\test2\\'+item))
+    #     net_glob.load_state_dict(torch.load('D:\\test\\'+item))
     #     w_apv.append(copy.deepcopy(net_glob.state_dict()))
     # w_glob2 = FedAvg(w_apv)
     # net_glob.load_state_dict(w_glob2)
-    # torch.save(w_glob2, "D:\\test2.pkl")
+    # torch.save(w_glob2, "D:\\test.pkl")
 
-    net_glob.load_state_dict(torch.load('D:\\test2.pkl'))
+    net_glob.load_state_dict(torch.load('D:\\aggModel-iter-0-epoch-10.pkl'))
 
     # plot loss curve
     # plt.figure()
