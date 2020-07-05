@@ -42,7 +42,6 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
     """
     localQuery = subprocess.Popen(args=['../commonComponent/interRun.sh query '+deviceID], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
     outs, errs = localQuery.communicate(timeout=15)
-    print(outs.strip())
     if localQuery.poll() == 0:
         localDetail = json.loads(outs.strip())
         if localDetail['epoch'] == currentEpoch and localDetail['taskID'] == taskID:
@@ -59,8 +58,32 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
             t1.add(deviceID)
             flagSet = t1
             lock.release()
+        else:
+            print('*** This device %s has not updated its model! ***'%(deviceID))
     else:
         print("Failed to query this device!", errs)
+
+def queryShell():
+    # shell envs
+    shellEnv1 = "export PATH=${PWD}/../bin:$PATH"
+    shellEnv2 = "export FABRIC_CFG_PATH=$PWD/../config/"
+    shellEnv3 = "export CORE_PEER_TLS_ENABLED=true"
+    shellEnv4 = "export CORE_PEER_LOCALMSPID=\"Org1MSP\""
+    shellEnv5 = "export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+    shellEnv6 = "export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp"
+    shellEnv7 = "export CORE_PEER_ADDRESS=localhost:7051"
+    oneKeyEnv = shellEnv1 + " && " + shellEnv2 + " && " + shellEnv3 + " && " + shellEnv4 + " && " + shellEnv5 + " && " + shellEnv6 + " && " + shellEnv7
+
+    # query task release info
+    ## task info template {"Args":["set","taskRelease","{"taskID":"fl1234","epochs":10,"status":"start","usersFrac":0.1}"]}
+    taskQueryshell = "peer chaincode query -C mychannel -n sacc -c '{\"Args\":[\"get\",\"taskRelease\"]}'"
+    taskQuery = os.popen(oneKeyEnv + " && " + taskQueryshell)
+    taskInfoR = taskQuery.read()
+    taskQuery.close()
+    taskInfo = json.loads(taskInfoR)
+    args.frac = taskInfo['usersFrac']
+    args.epochs = taskInfo['epochs']
+    taskID = taskInfo['taskID']
 
 if __name__ == '__main__':
     reCon, reCode = ipfsAddFile(sys.argv[1])
