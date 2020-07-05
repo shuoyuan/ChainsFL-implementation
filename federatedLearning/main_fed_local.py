@@ -159,7 +159,7 @@ if __name__ == '__main__':
             plt.figure()
             plt.plot(range(len(loss_train)), loss_train)
             plt.ylabel('train_loss')
-            plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}_{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration, datetime.datetime.now().strftime('%Y%m%d%H%M%S')))
+            plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration))
             print('Current iteration %d has been completed!'%iteration)
             iteration += 1
                 
