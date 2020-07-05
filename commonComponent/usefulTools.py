@@ -91,6 +91,7 @@ def simpleQuery(key):
 
 
 if __name__ == '__main__':
+    taskInfo = {}
     outs, errs = simpleQuery("device00091")
     print(outs)
     taskInfo = json.loads(outs)
