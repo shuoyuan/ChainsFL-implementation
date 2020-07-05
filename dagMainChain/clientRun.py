@@ -195,6 +195,7 @@ def main(aim_addr='127.0.0.1'):
             w_locals = []
             while (len(flagList) != 0):
                 flagSet = set()
+                ts = []
                 lock = threading.Lock()
                 for deviceID in flagList:
                     t = threading.Thread(target=usefulTools.queryLocal,args=(lock,taskID,deviceID,currentEpoch,flagSet,))
