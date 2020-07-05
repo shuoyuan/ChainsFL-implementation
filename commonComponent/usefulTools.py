@@ -94,5 +94,5 @@ if __name__ == '__main__':
     outs, errs = simpleQuery("device00091")
     print(outs)
     taskInfo = json.loads(outs)
-    print(type(taskinfo))
+    print(type(taskInfo))
     print(taskInfo)
