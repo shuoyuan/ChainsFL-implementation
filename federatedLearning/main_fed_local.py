@@ -119,6 +119,7 @@ if __name__ == '__main__':
                         if localAddStt == 0:
                             print('%s has been added to the IPFS network!'%devLocFile)
                             print('And the hash value of this file is %s\n'%localAdd)
+                            break
                         else:
                             print('Failed to add %s to the IPFS network!'%devLocFile)
                     while 1:
