@@ -88,6 +88,9 @@ def main(aim_addr='127.0.0.1'):
     deviceSelected = []
     m = max(int(args.frac * args.num_users), 1) # args.frac is the fraction of users
     idxs_users = np.random.choice(range(args.num_users), m, replace=False)
+    print('\n******************')
+    print('The idxs of selected device are\n', idxs_users)
+    print('******************\n')
 
     ## Exchange the info of selected device with fabric
     with open('../commonComponent/selectedDeviceIdxs.txt', 'wb') as f:
@@ -193,6 +196,9 @@ def main(aim_addr='127.0.0.1'):
                 print(aggPubErrs)
                 print('*** Failed to publish the init aggModel of ' + taskID + ' ! ***\n')
         
+        ## wait the local train
+        time.sleep(10)
+        
         ## Aggregated the local model trained by the selected devices
         currentEpoch = 1
         aggEchoFileHash = ''
@@ -225,8 +231,10 @@ def main(aim_addr='127.0.0.1'):
             while 1:
                 aggEchoFileHash, sttCodeAdd = usefulTools.ipfsAddFile(aggEchoParasFile)
                 if sttCodeAdd == 0:
-                    print('\nThe aggregated parasfile ' + aggEchoParasFile + ' has been uploaded!\n')
-                    print('And the fileHash is ' + aggEchoFileHash + '\n')
+                    print('\n*************************')
+                    print('The aggregated parasfile ' + aggEchoParasFile + ' has been uploaded!')
+                    print('And the fileHash is ' + aggEchoFileHash + '!')
+                    print('*************************\n')
                     break
                 else:
                     print('Error: ' + aggEchoFileHash)
@@ -241,12 +249,14 @@ def main(aim_addr='127.0.0.1'):
                 epochAggModelPublish = subprocess.Popen(args=['../commonComponent/interRun.sh aggregated '+taskID+' '+str(currentEpoch)+' '+taskStatus+' '+aggEchoFileHash], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                 aggPubOuts, aggPubErrs = epochAggModelPublish.communicate(timeout=10)
                 if epochAggModelPublish.poll() == 0:
-                    print(aggPubOuts)
-                    print('*** The aggModel of ' + taskID + ' has been published! ***\n')
+                    print('\n******************')
+                    print('The info of task ' + taskID + ' is ' + aggPubOuts)
+                    print('*** The model aggregated in epoch ' + str(currentEpoch) + ' for ' + taskID + ' has been published! ***')
+                    print('******************\n')
                     break
                 else:
                     print(aggPubErrs)
-                    print('*** Failed to publish the init aggModel of ' + taskID + ' ! ***\n')
+                    print('*** Failed to publish the Model aggregated in epoch ' + str(currentEpoch) + ' for ' + taskID + ' ! ***\n')
             currentEpoch += 1
         
         new_trans = transaction.Transaction(time.time(), nodeNum,'', aggEchoFileHash, apv_trans_name)

@@ -86,7 +86,7 @@ def simpleQuery(key):
     if infoQuery.poll() == 0:
         return outs.strip(), infoQuery.poll()
     else:
-        print("*** Failed to query this info! ***", errs.strip())
+        print("*** Failed to query the info of " + str(key) + "! ***" + errs.strip())
         return errs.strip(), infoQuery.poll()
 
 

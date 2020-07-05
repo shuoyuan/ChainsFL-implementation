@@ -52,21 +52,25 @@ if __name__ == '__main__':
             taskRelQue, taskRelQueStt = usefulTools.simpleQuery('taskRelease')
             if taskRelQueStt == 0:
                 taskRelInfo = json.loads(taskRelQue)
+                print('\n******************')
                 print('Latest task release status is %s!'%taskRelQue)
+                print('******************\n')
                 break
         taskRelEpoch = int(taskRelInfo['epoch'])
         
         # task info template {"epoch":"0","status":training,"paras":"QmSaAhKsxELzzT1uTtnuBacgfRjhehkzz3ybwnrkhJDbZ2"}
         taskID = taskRelInfo['taskID']
-        print('\n**********')
+        print('\n******************')
         print('Current task is',taskID)
-        print('**********\n')
+        print('******************\n')
         taskInfo = {}
         while 1:
             taskInQue, taskInQueStt = usefulTools.simpleQuery(taskID)
             if taskInQueStt == 0:
                 taskInfo = json.loads(taskInQue)
-                print('Latest task info is %s!\n'%taskInQue)
+                print('\n******************')
+                print('Latest task info is %s!'%taskInQue)
+                print('******************\n')
                 break
         if taskInfo['status'] == 'done':
             print('*** The latest task has been completed! ***\n')
@@ -80,7 +84,9 @@ if __name__ == '__main__':
                     taskInQueEpo, taskInQueEpoStt = usefulTools.simpleQuery(taskID)
                     if taskInQueEpoStt == 0:
                         taskInfoEpo = json.loads(taskInQueEpo)
-                        print('Latest task info is %s!\n'%taskInQueEpo)
+                        print('\n******************')
+                        print('(In loop) Latest task info is %s!\n'%taskInQueEpo)
+                        print('******************\n')
                         break
                 
                 ## download the paras file of aggregated model for training in current epoch 
@@ -88,10 +94,10 @@ if __name__ == '__main__':
                 while 1:
                     aggBasMod, aggBasModStt = usefulTools.ipfsGetFile(taskInfoEpo['paras'], aggBasModFil)
                     if aggBasModStt == 0:
-                        print('The paras file of aggregated model for epoch %d training has been downloaded!'%currentEpoch)
+                        print('\nThe paras file of aggregated model for epoch %d training has been downloaded!\n'%currentEpoch)
                         break
                     else:
-                        print('Failed to download the paras file of aggregated model for epoch %d training!'%currentEpoch)
+                        print('\nFailed to download the paras file of aggregated model for epoch %d training!\n'%currentEpoch)
                 # build network
                 net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
                 net_glob.train()
@@ -107,20 +113,22 @@ if __name__ == '__main__':
                 allDeviceName = []
                 for i in range(args.num_users):
                     allDeviceName.append("device"+("{:0>5d}".format(i)))
+                print('\n******************')
                 print('The idxs of selected device are\n', idxs_users)
+                print('******************\n')
 
                 loss_locals = []
                 for idx in idxs_users:
                     local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
                     w, loss = local.train(net=copy.deepcopy(net_glob).to(args.device))
                     loss_locals.append(copy.deepcopy(loss))
-                    devLocFile = './data/local/' + allDeviceName[idx] + '-' + taskID + '-epoch' + str(currentEpoch) + '.pkl'
+                    devLocFile = './data/local/' + allDeviceName[idx] + '-' + taskID + '-epoch-' + str(currentEpoch) + '.pkl'
                     torch.save(w, devLocFile)
                     while 1:
                         localAdd, localAddStt = usefulTools.ipfsAddFile(devLocFile)
                         if localAddStt == 0:
                             print('%s has been added to the IPFS network!'%devLocFile)
-                            print('And the hash value of this file is %s\n'%localAdd)
+                            print('And the hash value of this file is %s'%localAdd)
                             break
                         else:
                             print('Failed to add %s to the IPFS network!'%devLocFile)
@@ -135,6 +143,7 @@ if __name__ == '__main__':
                             print(localErrs)
                             print('*** Failed to release Local model train in epoch ' + str(currentEpoch) + ' of ' + allDeviceName[idx] + '! ***\n')
                             time.sleep(2)
+                currentEpoch += 1
 
                 loss_avg = sum(loss_locals) / len(loss_locals)
                 print('Epoch {:3d}, Average loss {:.3f}'.format(currentEpoch, loss_avg))
