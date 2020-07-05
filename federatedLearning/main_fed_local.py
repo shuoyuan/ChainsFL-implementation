@@ -44,6 +44,10 @@ if __name__ == '__main__':
     if os.path.exists('./data/local'):
         shutil.rmtree('./data/local')
     os.mkdir('./data/local')
+
+    # build network
+    net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
+    net_glob.train()
     
     ## Used to check whether it is a new task
     checkTaskID = ''
@@ -107,9 +111,6 @@ if __name__ == '__main__':
                         break
                     else:
                         print('\nFailed to download the paras file of aggregated model for epoch %d training!\n'%(int(taskInfoEpo['epoch'])+1))
-                # build network
-                net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
-                net_glob.train()
 
                 # copy weights and load the base model paras
                 w_glob = net_glob.state_dict()
