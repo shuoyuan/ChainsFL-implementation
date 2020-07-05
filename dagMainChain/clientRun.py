@@ -175,8 +175,8 @@ def main(aim_addr='127.0.0.1'):
             taskRelease = subprocess.Popen(args=['../commonComponent/interRun.sh release '+taskID+' '+str(taskEpochs)+' '+taskInitStatus+' '+str(taskUsersFrac)], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
             trOuts, trErrs = taskRelease.communicate(timeout=10)
             if taskRelease.poll() == 0:
-                print(trOuts)
-                print('*** ' + taskID + ' has been released! ***\n')
+                print('*** ' + taskID + ' has been released! ***')
+                print('*** And the detail of this task is ' + trOuts.strip() + '! ***\n')
                 break
             else:
                 print(trErrs)
@@ -189,8 +189,8 @@ def main(aim_addr='127.0.0.1'):
             spcAggModelPublish = subprocess.Popen(args=['../commonComponent/interRun.sh aggregated '+taskID+' 0 training '+basefileHash], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
             aggPubOuts, aggPubErrs = spcAggModelPublish.communicate(timeout=10)
             if spcAggModelPublish.poll() == 0:
-                print(aggPubOuts)
-                print('*** The init aggModel of ' + taskID + ' has been published! ***\n')
+                print('*** The init aggModel of ' + taskID + ' has been published! ***')
+                print('*** And the detail of the init aggModel is ' + aggPubOuts.strip() + ' ! ***\n')
                 break
             else:
                 print(aggPubErrs)
