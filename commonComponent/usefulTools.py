@@ -64,6 +64,9 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
         print("Failed to query this device!", errs)
 
 def queryShell():
+    """
+    Use the shell envs to query info from fabric network.
+    """
     # shell envs
     shellEnv1 = "export PATH=${PWD}/../bin:$PATH"
     shellEnv2 = "export FABRIC_CFG_PATH=$PWD/../config/"
@@ -74,16 +77,18 @@ def queryShell():
     shellEnv7 = "export CORE_PEER_ADDRESS=localhost:7051"
     oneKeyEnv = shellEnv1 + " && " + shellEnv2 + " && " + shellEnv3 + " && " + shellEnv4 + " && " + shellEnv5 + " && " + shellEnv6 + " && " + shellEnv7
 
-    # query task release info
-    ## task info template {"Args":["set","taskRelease","{"taskID":"fl1234","epochs":10,"status":"start","usersFrac":0.1}"]}
-    taskQueryshell = "peer chaincode query -C mychannel -n sacc -c '{\"Args\":[\"get\",\"taskRelease\"]}'"
-    taskQuery = os.popen(oneKeyEnv + " && " + taskQueryshell)
-    taskInfoR = taskQuery.read()
-    taskQuery.close()
-    taskInfo = json.loads(taskInfoR)
-    args.frac = taskInfo['usersFrac']
-    args.epochs = taskInfo['epochs']
-    taskID = taskInfo['taskID']
+def simpleQuery(key):
+    """
+    Use the only key to query info from fabric network.
+    """
+    infoQuery = subprocess.Popen(args=['../commonComponent/interRun.sh query '+key], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
+    outs, errs = infoQuery.communicate(timeout=15)
+    if infoQuery.poll() == 0:
+        return outs.strip(), infoQuery.poll()
+    else:
+        print("*** Failed to query this info! ***", errs.strip())
+        return errs.strip(), infoQuery.poll()
+
 
 if __name__ == '__main__':
     reCon, reCode = ipfsAddFile(sys.argv[1])

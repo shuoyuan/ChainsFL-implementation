@@ -19,6 +19,7 @@ import shutil
 import json
 import random
 import subprocess
+import pickle
 
 # Common Components
 sys.path.append('../commonComponent')
@@ -87,6 +88,11 @@ def main(aim_addr='127.0.0.1'):
     deviceSelected = []
     m = max(int(args.frac * args.num_users), 1) # args.frac is the fraction of users
     idxs_users = np.random.choice(range(args.num_users), m, replace=False)
+
+    ## Exchange the info of selected device with fabric
+    with open('../commonComponent/selectedDeviceIdxs.txt', 'wb') as f:
+        pickle.dump(idxs_users, f)
+
     for idx in idxs_users:
         deviceSelected.append(allDeviceName[idx])
 

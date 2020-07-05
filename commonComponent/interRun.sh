@@ -105,8 +105,6 @@ if [ "${MODE}" == "release" ]; then
   devQuery 1 'taskRelease'
 elif [ "${MODE}" == "local" ]; then
   localModelPub 1 $1 $2 $3 $4
-  sleep 2
-  devQuery 1 $1
 elif [ "${MODE}" == "aggregated" ]; then
   aggModelPub 1 $1 $2 $3 $4
   sleep 2
