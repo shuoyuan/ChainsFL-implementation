@@ -92,8 +92,12 @@ def simpleQuery(key):
 
 if __name__ == '__main__':
     taskInfo = {}
-    outs, errs = simpleQuery("device00091")
-    print(outs)
-    taskInfo = json.loads(outs)
+    while 1:
+        outs, stt = simpleQuery("device00091")
+        if stt == 0:
+            print(outs)
+            taskInfo = json.loads(outs)
+            print('Latest task info is %s!\n'%outs)
+            break
     print(type(taskInfo))
     print(taskInfo)
