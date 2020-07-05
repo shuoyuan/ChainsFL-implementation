@@ -160,7 +160,7 @@ if __name__ == '__main__':
             plt.ylabel('train_loss')
             plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration))
             print('Current iteration %d has been completed!'%iteration)
-        iteration += 1
+            iteration += 1
                 
             # testing
             # net_glob.eval()
