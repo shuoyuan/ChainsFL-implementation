@@ -47,8 +47,8 @@ if __name__ == '__main__':
     ## Used to check whether it is a new task
     checkTaskID = ''
 
+    iteration = 1
     while 1:
-        iteration = 1
         taskRelInfo = {}
         # taskRelease info template {"taskID":"task1994","epoch":10,"status":"start","usersFrac":0.1}
         while 1:
@@ -98,10 +98,10 @@ if __name__ == '__main__':
                 while 1:
                     aggBasMod, aggBasModStt = usefulTools.ipfsGetFile(taskInfoEpo['paras'], aggBasModFil)
                     if aggBasModStt == 0:
-                        print('\nThe paras file of aggregated model for epoch %s training has been downloaded!\n'%str(taskInfoEpo['epoch']))
+                        print('\nThe paras file of aggregated model for epoch %d training has been downloaded!\n'%(int(taskInfoEpo['epoch'])+1))
                         break
                     else:
-                        print('\nFailed to download the paras file of aggregated model for epoch %s training!\n'%str(taskInfoEpo['epoch']))
+                        print('\nFailed to download the paras file of aggregated model for epoch %d training!\n'%(int(taskInfoEpo['epoch'])+1))
                 # build network
                 net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
                 net_glob.train()
@@ -159,6 +159,7 @@ if __name__ == '__main__':
             plt.plot(range(len(loss_train)), loss_train)
             plt.ylabel('train_loss')
             plt.savefig('./save/fed_{}_{}_{}_C{}_iid{}_iteration{}.png'.format(args.dataset, args.model, args.epochs, args.frac, args.iid, iteration))
+            print('Current iteration %d has been completed!'%iteration)
         iteration += 1
                 
             # testing
