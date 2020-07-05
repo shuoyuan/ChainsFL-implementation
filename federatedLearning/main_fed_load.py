@@ -24,12 +24,10 @@ if __name__ == '__main__':
     net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
     net_glob.train()
 
-    # copy weights
-    w_glob = net_glob.state_dict()
-    # torch.save(w_glob, './data/paras/9parameter.pkl')
-    # print('The genesis paras are', w_glob)
 
-    # training
+    w_glob = net_glob.state_dict()
+
+
     loss_train = []
     
     # w_locals, loss_locals = [], []
@@ -47,7 +45,7 @@ if __name__ == '__main__':
 
 
     # w_apv = []
-    net_glob.load_state_dict(torch.load('./data/paras/'+'9parameter.pkl'))
+    net_glob.load_state_dict(torch.load('../dagMainChain/clientS/paras/'+'aggModel-iter-1-epoch-1.pkl'))
     # tst = net_glob.state_dict()
     # w_apv.append(copy.deepcopy(tst))
     # print('The paras of tst are', tst)
