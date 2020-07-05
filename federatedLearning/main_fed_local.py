@@ -38,6 +38,10 @@ import buildModels
 
 if __name__ == '__main__':
 
+    if os.path.exists('./data/local'):
+        shutil.rmtree('./data/local')
+    os.mkdir('./data/local')
+
     while 1:
         iteration = 1
         taskRelInfo = {}
