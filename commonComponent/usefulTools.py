@@ -91,5 +91,6 @@ def simpleQuery(key):
 
 
 if __name__ == '__main__':
-    reCon, reCode = ipfsAddFile(sys.argv[1])
-    print(reCon, '\n', reCode)
+    outs, errs = simpleQuery("device00091")
+    print(outs)
+    taskInfo = json.loads(outs)
