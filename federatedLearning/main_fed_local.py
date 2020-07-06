@@ -45,6 +45,10 @@ if __name__ == '__main__':
         shutil.rmtree('./data/local')
     os.mkdir('./data/local')
 
+    if os.path.exists('./data/paras'):
+        shutil.rmtree('./data/paras')
+    os.mkdir('./data/paras')
+
     # build network
     net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
     net_glob.train()
@@ -100,7 +104,7 @@ if __name__ == '__main__':
                             print('\n*************************** %s has not been updated ***************************'%taskID)
                             print('(In loop) Latest task info is \n %s!'%taskInQueEpo)
                             print('*************************************************************************************\n')
-                            time.sleep(2)
+                            time.sleep(7)
                 ## download the paras file of aggregated model for training in current epoch 
                 aggBasModFil = './data/paras/aggModel-iter-' + str(iteration) + '-epoch-' + str(currentEpoch-1) + '.pkl'
                 while 1:

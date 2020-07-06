@@ -71,6 +71,23 @@ def main(aim_addr='127.0.0.1'):
         shutil.rmtree('./clientS/paras')
     os.mkdir('./clientS/paras')
 
+    if os.path.exists('./clientS/paras/apvTrans'):
+        shutil.rmtree('./clientS/paras/apvTrans')
+    os.mkdir('./clientS/paras/apvTrans')
+
+    if os.path.exists('./clientS/paras/local'):
+        shutil.rmtree('./clientS/paras/local')
+    os.mkdir('./clientS/paras/local')
+
+    if os.path.exists('./clientS/tipsJson'):
+        shutil.rmtree('./clientS/tipsJson')
+    os.mkdir('./clientS/tipsJson')
+
+    if os.path.exists('./clientS/apvJson'):
+        shutil.rmtree('./clientS/apvJson')
+    os.mkdir('./clientS/apvJson')
+
+
     # build model
     net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
     net_glob.train()
@@ -109,8 +126,8 @@ def main(aim_addr='127.0.0.1'):
         if iteration_count == 0:
             apv_trans_name.append('GenesisBlock')
         else:
-            tips_list = 'tip_list'
-            tips_file = './clientS/' + tips_list + '.json'
+            tips_list = 'tipsList'
+            tips_file = './clientS/tipsJson/iteration-' + str(iteration_count) + '-' + tips_list + '.json'
             dagClient.client_tips_require(aim_addr, tips_list, tips_file)
             with open(tips_file,'r') as f1:
                 tips_dict = json.load(f1)
@@ -127,11 +144,11 @@ def main(aim_addr='127.0.0.1'):
         # Get the trans file and the model paras file
         w_apv = []
         for apvTrans in apv_trans_name:
-            apvTransFile =  './clientS/' + apvTrans + '.json'
+            apvTransFile =  './clientS/apvJson/' + apvTrans + '.json'
             dagClient.client_trans_require(aim_addr, apvTrans, apvTransFile)
             print('\nThis approved trans is ', apvTrans, ', and the file is ', apvTransFile)
             apvTransInfo = transaction.read_transaction(apvTransFile)
-            apvParasFile = './clientS/paras/' + apvTrans + '.pkl'
+            apvParasFile = './clientS/paras/apvTrans/iteration-' + str(iteration_count) + '-' + apvTrans + '.pkl'
 
             while 1:
                 fileGetStatus, sttCodeGet = usefulTools.ipfsGetFile(apvTransInfo.model_para, apvParasFile)
@@ -211,7 +228,8 @@ def main(aim_addr='127.0.0.1'):
                 ts = []
                 lock = threading.Lock()
                 for deviceID in flagList:
-                    t = threading.Thread(target=usefulTools.queryLocal,args=(lock,taskID,deviceID,currentEpoch,flagSet,))
+                    localFileName = './clientS/paras/local/' + taskID + '-' + deviceID + '-epoch-' + str(currentEpoch) + '.pkl'
+                    t = threading.Thread(target=usefulTools.queryLocal,args=(lock,taskID,deviceID,currentEpoch,flagSet,localFileName,))
                     t.start()
                     ts.append(t)
                 for t in ts:
@@ -219,7 +237,7 @@ def main(aim_addr='127.0.0.1'):
                 time.sleep(2)
                 flagList = flagList - flagSet
             for deviceID in deviceSelected:
-                localFileName = './clientS/paras/' + taskID + '-' + deviceID + '-epoch-' + str(currentEpoch) + '.pkl'
+                localFileName = './clientS/paras/local/' + taskID + '-' + deviceID + '-epoch-' + str(currentEpoch) + '.pkl'
                 net_glob.load_state_dict(torch.load(localFileName))
                 tmpParas = net_glob.state_dict()
                 w_locals.append(copy.deepcopy(tmpParas))
