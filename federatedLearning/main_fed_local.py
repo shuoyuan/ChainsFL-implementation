@@ -104,7 +104,7 @@ if __name__ == '__main__':
                             print('\n*************************** %s has not been updated ***************************'%taskID)
                             print('(In loop) Latest task info is \n %s!'%taskInQueEpo)
                             print('*************************************************************************************\n')
-                            time.sleep(7)
+                            time.sleep(10)
                 ## download the paras file of aggregated model for training in current epoch 
                 aggBasModFil = './data/paras/aggModel-iter-' + str(iteration) + '-epoch-' + str(currentEpoch-1) + '.pkl'
                 while 1:
