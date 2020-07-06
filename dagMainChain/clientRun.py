@@ -126,7 +126,7 @@ def main(aim_addr='127.0.0.1'):
         if iteration_count == 0:
             apv_trans_name.append('GenesisBlock')
         else:
-            tips_list = 'tipsList'
+            tips_list = 'tips_list'
             tips_file = './clientS/tipsJson/iteration-' + str(iteration_count) + '-' + tips_list + '.json'
             dagClient.client_tips_require(aim_addr, tips_list, tips_file)
             with open(tips_file,'r') as f1:
