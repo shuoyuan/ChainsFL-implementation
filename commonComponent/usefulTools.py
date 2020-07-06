@@ -36,7 +36,7 @@ def ipfsAddFile(fileName):
     else:
         return errs.strip(), ipfsAdd.poll()
 
-def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
+def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet, localFileName):
     """
     Query and download the paras file of local model trained by the device.
     """
@@ -47,7 +47,7 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
         if localDetail['epoch'] == currentEpoch and localDetail['taskID'] == taskID:
             print("The query result of the " + deviceID + " is ", outs.strip())
             while 1:
-                localFileName = './clientS/paras/' + taskID + '-' + deviceID + '-epoch-' + str(currentEpoch) + '.pkl'
+                # localFileName = './clientS/paras/' + taskID + '-' + deviceID + '-epoch-' + str(currentEpoch) + '.pkl'
                 outs, stt = ipfsGetFile(localDetail['paras'], localFileName)
                 if stt == 0:
                     break
@@ -60,8 +60,8 @@ def queryLocal(lock, taskID, deviceID, currentEpoch, flagSet):
             lock.release()
         # else:
         #     print('*** This device %s has not updated its model! ***'%(deviceID))
-    else:
-        print("Failed to query this device!", errs)
+    # else:
+    #     print("Failed to query this device!", errs)
 
 def queryShell():
     """
