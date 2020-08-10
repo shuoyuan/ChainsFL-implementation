@@ -60,9 +60,12 @@ def read_transaction(trans_file):
 
 def save_transaction(trans,file_addr):
     file_name = file_addr + '/node{}_'.format(trans.src_node) + str(trans.timestamp) + '.json'
-    with open(file_name, 'w') as f:
-        f.write(str(trans))
-        f.close()
+    try:
+        with open(file_name, 'w') as f:
+            f.write(str(trans))
+    except Exception as e:
+        print("Couldn't save the trans " + file_name)
+        print('Reason:', e)
 
 def save_genesis(trans,file_addr):
     file_name = file_addr + 'GenesisBlock' + '.json'

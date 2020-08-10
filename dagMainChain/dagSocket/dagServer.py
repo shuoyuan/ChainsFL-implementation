@@ -12,7 +12,7 @@ def socket_service(local_addr, dag_pool, beta):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((local_addr, 6666))
+        s.bind(("", 6666))
         s.listen(5)
         print('DAG_socket starts...')
     except socket.error as msg:
@@ -69,9 +69,12 @@ def deal_data(conn, addr, dag_pool, beta):
             conn.send('ok'.encode())
             msg_t = json.loads(data_t.decode("utf-8"))
             new_trans = transaction.Transaction(**msg_t)
-            dag_pool.DAG_publish(new_trans, beta)
             transaction.save_transaction(new_trans, './dagSS/dagPool/')
-            print('The new trans had been published!')
+            dag_pool.DAG_publish(new_trans, beta)
+            transName = 'node{}_'.format(new_trans.src_node) + str(new_trans.timestamp)
+            print('*******************************************')
+            print('The new trans *'+transName+'* had been published!')
+            print('*******************************************')
         elif msg == 'delay':
             conn.send(str(time.time()).encode())
     conn.close()
