@@ -20,12 +20,14 @@ import numpy as np
 import time
 import glob
 
-# The number of tips confirmed by the new transaction
-alpha = 2
+# The number of tips selected by the new transaction
+alpha = 3
 ## The number of tips needs to be kept greater than 3
 beta = 3
 
 def main(arg=True):
+    if os.path.exists('./dagSS') == False:
+        os.mkdir('./dagSS')
     if os.path.exists('./dagSS/dagPool'):
         shutil.rmtree('./dagSS/dagPool')
     os.mkdir('./dagSS/dagPool')
@@ -34,7 +36,10 @@ def main(arg=True):
 # Generate the genesis block for DAG
     # genesisGen = os.popen(r"bash ./invokeRun.sh genesis")
     # genesisInfo = genesisGen.read()
+    # For MLP
     genesisInfo = 'QmaBYCmzPQ2emuXpVykLDHra7t8tPiU8reFMkbHpN1rRoo'
+    # For CNN
+    # genesisInfo = 'QmTZqGKUEvD5F8vQyEEJLJB7rzX17tpnN2Uu4YWBRZEYQx'
     print("The genesisBlock hash value is ", genesisInfo)
     # genesisGen.close()
     ini_trans = transaction.Transaction(time.time(), 0, 0.0, genesisInfo, [])
