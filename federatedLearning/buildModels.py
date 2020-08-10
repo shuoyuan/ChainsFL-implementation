@@ -75,10 +75,19 @@ def modelBuild():
         net_glob = MLP(dim_in=len_in, dim_hidden=200, dim_out=args.num_classes).to(args.device)
     else:
         exit('Error: unrecognized model')
-
+        
+    print("********************************")
     print(net_glob)
+    print("********************************")
 
     return net_glob, args, dataset_train, dataset_test, dict_users
+
+def evalua(net_glob, paras, dataset_test, args):
+    net_glob.load_state_dict(paras)
+    net_glob.eval()
+    acc_test, loss_test = test_img(net_glob, dataset_test, args)
+    # print("Testing accuracy: {:.2f}".format(acc_test))
+    return acc_test, loss_test
 
 
 # if __name__ == '__main__':
