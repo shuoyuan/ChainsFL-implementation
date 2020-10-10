@@ -18,6 +18,7 @@ import time
 import shutil
 from torchvision import datasets, transforms
 import torch
+from torch.utils.tensorboard import SummaryWriter
 from json import dumps
 import os
 import sys
@@ -52,6 +53,9 @@ if __name__ == '__main__':
     # build network
     net_glob, args, dataset_train, dataset_test, dict_users = buildModels.modelBuild()
     net_glob.train()
+
+    with open('../commonComponent/dict_users.pkl', 'rb') as f:
+        dict_users = pickle.load(f)
     
     ## Used to check whether it is a new task
     checkTaskID = ''
@@ -120,32 +124,41 @@ if __name__ == '__main__':
                 net_glob.load_state_dict(torch.load(aggBasModFil))
 
                 # Device name list
-                with open('../commonComponent/selectedDeviceIdxs.txt', 'rb') as f:
-                    idxs_users = pickle.load(f)
+                # with open('../commonComponent/selectedDeviceIdxs.txt', 'rb') as f:
+                #     idxs_users = pickle.load(f)
+
+                idxs_users = [ 5, 56, 76, 78, 68, 25, 47, 15, 61, 55]
+
                 ## init the list of device name
                 allDeviceName = []
                 for i in range(args.num_users):
                     allDeviceName.append("device"+("{:0>5d}".format(i)))
 
-                print('\n**************************** Idxs of selected devices *****************************')
-                print('The idxs of selected devices are\n', idxs_users)
-                print('*************************************************************************************\n')
+                # print('\n**************************** All devices *****************************')
+                # print(allDeviceName)
+                # print('*************************************************************************************\n')
 
                 loss_locals = []
                 for idx in idxs_users:
-                    local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
-                    w, loss = local.train(net=copy.deepcopy(net_glob).to(args.device))
-                    loss_locals.append(copy.deepcopy(loss))
-                    devLocFile = './data/local/' + taskID + '-' + allDeviceName[idx] + '-epoch-' + str(currentEpoch) + '.pkl'
-                    torch.save(w, devLocFile)
-                    while 1:
-                        localAdd, localAddStt = usefulTools.ipfsAddFile(devLocFile)
-                        if localAddStt == 0:
-                            print('%s has been added to the IPFS network!'%devLocFile)
-                            print('And the hash value of this file is %s'%localAdd)
-                            break
-                        else:
-                            print('Failed to add %s to the IPFS network!'%devLocFile)
+                    if idx not in []:
+                        local = LocalUpdate(args=args, dataset=dataset_train, idxs=dict_users[idx])
+                        w, loss = local.train(net=copy.deepcopy(net_glob).to(args.device))
+                        loss_locals.append(copy.deepcopy(loss))
+                        devLocFile = './data/local/' + taskID + '-' + allDeviceName[idx] + '-epoch-' + str(currentEpoch) + '.pkl'
+                        torch.save(w, devLocFile)
+                        while 1:
+                            localAdd, localAddStt = usefulTools.ipfsAddFile(devLocFile)
+                            if localAddStt == 0:
+                                print('%s has been added to the IPFS network!'%devLocFile)
+                                print('And the hash value of this file is %s'%localAdd)
+                                break
+                            else:
+                                print('Failed to add %s to the IPFS network!'%devLocFile)
+                    else:
+                        # For CNN
+                        localAdd = "QmTZqGKUEvD5F8vQyEEJLJB7rzX17tpnN2Uu4YWBRZEYQx"
+                        # For MLP
+                        #localAdd = "QmaBYCmzPQ2emuXpVykLDHra7t8tPiU8reFMkbHpN1rRoo"
                     while 1:
                         localRelease = subprocess.Popen(args=['../commonComponent/interRun.sh local '+allDeviceName[idx]+' '+taskID+' '+str(currentEpoch)+' '+localAdd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding='utf-8')
                         localOuts, localErrs = localRelease.communicate(timeout=10)

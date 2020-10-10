@@ -8,9 +8,11 @@ import matplotlib.pyplot as plt
 import copy
 import numpy as np
 from torchvision import datasets, transforms
+from torch.utils.tensorboard import SummaryWriter
 import torch
 from json import dumps
 import datetime
+import os
 
 from utils.sampling import mnist_iid, mnist_noniid, cifar_iid
 from utils.options import args_parser
@@ -65,7 +67,7 @@ if __name__ == '__main__':
 
     # copy weights
     w_glob = net_glob.state_dict()
-
+    torch.save(w_glob, './data/genesisGPUForCNN.pkl')
     # training
     loss_train = []
 
@@ -78,6 +80,7 @@ if __name__ == '__main__':
             w, loss = local.train(net=copy.deepcopy(net_glob).to(args.device))
             w_locals.append(copy.deepcopy(w))
             loss_locals.append(copy.deepcopy(loss))
+            print(idx)
         # update global weights
         w_glob = FedAvg(w_locals)
         torch.save(w_glob, './data/paras/'+str(iter)+'parameter.pkl')

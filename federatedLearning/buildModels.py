@@ -63,6 +63,8 @@ def modelBuild():
     else:
         exit('Error: unrecognized dataset')
 
+    print("The para of iid is " + str(args.iid))
+
     img_size = dataset_train[0][0].shape
     if args.model == 'cnn' and args.dataset == 'cifar':
         net_glob = CNNCifar(args=args).to(args.device)
