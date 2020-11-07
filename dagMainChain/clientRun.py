@@ -463,4 +463,4 @@ def main(aim_addr='149.129.40.183'):
     writer.close()
 
 if __name__ == '__main__':
-    main('149.129.40.183')
+    main('192.168.2.12')

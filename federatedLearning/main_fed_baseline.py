@@ -98,13 +98,12 @@ if __name__ == '__main__':
     # print('Number of selected devices '+str(len(idxs_users)))
     # idxs_users = [ 7, 85, 14, 67, 88, 72, 20, 77, 89, 34, 82, 15, 26, 6, 42, 8, 60 ,49, 65, 46, 53, 24 ,31 ,98 ,64, 13, 56, 19, 74, 95]
     m = max(int(args.frac * args.num_users), 1) # args.frac is the fraction of users
-    idxs_users = np.random.choice(range(args.num_users), m, replace=False)
-
-    random.seed(10)
-    maliciousN = random.sample(idxs_users.tolist(), 0)
 
     for iter in range(args.epochs):
         w_locals, loss_locals = [], []
+        idxs_users = np.random.choice(range(args.num_users), m, replace=False)
+
+        maliciousN = random.sample(idxs_users.tolist(), 0)
         # m = max(int(args.frac * args.num_users), 1) # args.frac is the fraction of users
         # idxs_users = np.random.choice(range(args.num_users), m, replace=False)
         for idx in idxs_users:
