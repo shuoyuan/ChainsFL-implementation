@@ -7,6 +7,7 @@ Implementation of the ChainsFL.
 - Python3
 - Pytorch
 - Torchvision
+- [IPFS](https://docs.ipfs.io/install/command-line/#official-distributions)
 
 **Attention**: The configs in `./commonComponent/interRun.sh` related to Fabric should be modified to access the Fabric deployed above. Besides, this file should be authorized with the right of *writer/read/run*.
 
