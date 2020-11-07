@@ -14,7 +14,7 @@ Implementation of the ChainsFL.
 
 The DAG could be deployed on a personal computer or the cloud server.
 
-Copy all the files of this repository to the PC or server, and the run follower commands in the root path of this repository.
+Copy all the files of this repository to the PC or cloud server, and then run follower commands in the root path of this repository.
 
 ```
 cd dagMainChain
@@ -23,9 +23,9 @@ python serverRun.py
 
 ## Run one shard
 
-The shard could be deployed on a personal computer or the cloud server.
+The shard also could be deployed on a personal computer or the cloud server.
 
-Copy all the files of this repository to the location of deployment, and modify `line 466` for the real address of the DAG server deployed above. Then run follower commands in the root path of this repository.
+Copy all the files of this repository to the location of deployment, and modify `line 466` of `dagMainChain/clientRun.py` for the real address of the DAG server deployed above. Then run follower commands in the root path of this repository.
 
 ```
 # run the DAG client
