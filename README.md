@@ -39,7 +39,7 @@ python main_fed_local.py --epochs 1 --frac 0.1 --gpu -1 --model cnn --num_channe
 ```
 
 The details of these parameters could be found in file `federatedLearning/utils/options.py`. 
-It is should be noted that the `--epochs` configured in run `clientRun.py` represents the number of rounds run in each shard.
+It should be noted that the `--epochs` configured in run `clientRun.py` represents the number of rounds run in each shard.
 And the `--epochs` configured in run `main_fed_local.py` represents the number of epochs run in each local device.
 
 ## Run multiple shards
