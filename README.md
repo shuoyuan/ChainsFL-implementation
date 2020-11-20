@@ -1,5 +1,5 @@
 # ChainsFL
-Implementation of the ChainsFL.
+Implementation of ChainsFL.
 
 ## Requirments
 
