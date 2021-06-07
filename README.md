@@ -40,15 +40,15 @@ python main_fed_local.py --epochs 1 --frac 0.1 --gpu -1 --model cnn --num_channe
 
 The details of these parameters could be found in file `federatedLearning/utils/options.py`. 
 It should be noted that the `--epochs` configured in command with `clientRun.py` represents the number of rounds run in each shard.
-And the `--epochs` configured in command with `main_fed_local.py` represents the number of epochs run in each local device.
+And the `--epochs` configured in command with `main_fed_local.py` represents the number of epochs run on each local device.
 
 ## Run multiple shards
 
-Similar to the above, copy all the files of this repository and then modify the files and execute the commands described above.
+Similar to the above, copy all the files of this repository and then modify the files and execute the commands presented above.
 
 Besides, the para of `nodeNum` in `line 58` of `dagMainChain/clientRun.py` indicates the shard index which should be modified.
 
 ## Acknowledgments
 
-Acknowledgments give to [shaoxiongji](https://github.com/shaoxiongji/federated-learning) and [AshwinRJ](https://github.com/AshwinRJ/Federated-Learning-PyTorch) for the basic codes of FL.
+Acknowledgments give to [shaoxiongji](https://github.com/shaoxiongji/federated-learning) and [AshwinRJ](https://github.com/AshwinRJ/Federated-Learning-PyTorch) for the basic codes of the FL module.
 
